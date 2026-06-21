@@ -1,0 +1,32 @@
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Tooling caches
+.tmp/
+.shots/
+playwright-report/
+test-results/
+
+# Node (in case scripts get added later)
+node_modules/
+.next/
+.vercel/
+
+# Python (in case tools get added later)
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Local env / secrets
+.env
+.env.local
+.env.*.local
+
+# OS / scratch
+*.log
+*.swp
+*.bak
