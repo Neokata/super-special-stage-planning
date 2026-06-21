@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Super Special Stage — P&L</title>
+<style>
+  :root {
+    --bg: #faf2f2;
+    --panel: #ffffff;
+    --ink: #2a2732;
+    --muted: #6b6477;
+    --line: #e6dee2;
+    --accent: #ee2a6f;
+    --good: #c6d92d;
+    --bad: #d92a2a;
+    --warn: #d9892a;
+    --header-bg: #2a2732;
+    --header-ink: #faf2f2;
+    --scenario-c: #6b7d2a;
+    --scenario-e: #2a5d8a;
+    --scenario-b: #8a2a8a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  }
+  header {
+    background: var(--header-bg);
+    color: var(--header-ink);
+    padding: 18px 28px 14px;
+    border-bottom: 4px solid var(--accent);
+  }
+  header h1 { margin: 0 0 2px; font-size: 20px; letter-spacing: 0.2px; }
+  header .sub { color: #c8bdc6; font-size: 13px; }
+  header .meta { color: #8a7d8e; font-size: 12px; margin-top: 6px; }
+
+  main { padding: 18px 28px 80px; max-width: 1200px; margin: 0 auto; }
+
+  .scenarios {
+    display: flex;
+    gap: 0;
+    margin: 0 0 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .scenarios button {
+    background: transparent;
+    border: none;
+    padding: 10px 18px;
+    font: inherit;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+  }
+  .scenarios button.active[data-s="c"] { color: var(--scenario-c); border-color: var(--scenario-c); }
+  .scenarios button.active[data-s="e"] { color: var(--scenario-e); border-color: var(--scenario-e); }
+  .scenarios button.active[data-s="b"] { color: var(--scenario-b); border-color: var(--scenario-b); }
+  .scenarios .spacer { flex: 1; }
+  .scenarios .reset {
+    color: var(--accent);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 12px;
+    align-self: center;
+    margin-left: 12px;
+  }
+
+  section.panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  section.panel h2 {
+    margin: 0 0 10px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  section.panel .panel-note {
+    color: var(--muted);
+    font-size: 12px;
+    margin: -6px 0 12px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  th {
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.center { text-align: center; }
+  tr.subtotal td {
+    border-top: 2px solid var(--ink);
+    font-weight: 600;
+  }
+  tr.total td {
+    border-top: 2px solid var(--ink);
+    border-bottom: 3px double var(--ink);
+    font-weight: 700;
+    font-size: 15px;
+  }
+  tr.group td {
+    background: #f4eded;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.4px;
+  }
+  td input.cell, td input.qty {
+    width: 100%;
+    border: 1px solid transparent;
+    background: transparent;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    padding: 4px 6px;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+  td input.cell:focus, td input.qty:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #fff;
+  }
+  td input.qty { max-width: 90px; }
+  td input.cell.zero:not(:focus) { color: var(--muted); }
+  td input.cell { max-width: 130px; }
+
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .summary .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .summary .card .label {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+  .summary .card .val {
+    font-size: 22px;
+    font-weight: 700;
+    margin-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .summary .card .sub {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  .summary .card.rev .val { color: var(--good); }
+  .summary .card.cost .val { color: var(--bad); }
+  .summary .card.net .val { color: var(--accent); }
+  .summary .card.margin .val { color: var(--ink); }
+
+  .help {
+    background: #fff8e1;
+    border: 1px solid #f0d97a;
+    color: #5d4a14;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .scenario-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    margin-left: 8px;
+  }
+  .scenario-tag[data-s="c"] { background: #e9efcf; color: var(--scenario-c); }
+  .scenario-tag[data-s="e"] { background: #cfdcec; color: var(--scenario-e); }
+  .scenario-tag[data-s="b"] { background: #eccfec; color: var(--scenario-b); }
+
+  details { margin-top: 8px; }
+  details summary {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 4px 0;
+  }
+  details[open] summary { color: var(--ink); }
+
+  @media print {
+    header { background: #fff; color: var(--ink); border-bottom: 2px solid var(--ink); }
+    .scenarios, .help { display: none; }
+    section.panel { break-inside: avoid; }
+    body { background: #fff; }
+  }
+
+  @media (max-width: 720px) {
+    main { padding: 12px; }
+    .summary { grid-template-columns: repeat(2, 1fr); }
+    header { padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>TougeCon Super Special Stage — P&amp;L</h1>
+  <div class="sub">Oct 2–3, 2026 · Springdale, AR · Live editable forecast</div>
+  <div class="meta">Brand: TougeCon · Admin: Neokata · Numbers stored in this browser only</div>
+</header>
+
+<main>
+  <div class="help">
+    Edit any number — totals and margin recalc instantly. Switch scenarios
+    to model conservative / expected / best case. Numbers persist in your
+    browser (localStorage). Print or save-as-PDF to share.
+  </div>
+
+  <div class="scenarios" id="scenarios">
+    <button data-s="c" class="active">Conservative</button>
+    <button data-s="e">Expected</button>
+    <button data-s="b">Best Case</button>
+    <span class="spacer"></span>
+    <span id="scenTag" class="scenario-tag" data-s="c">Conservative</span>
+    <button class="reset" id="resetBtn" title="Clear this scenario back to defaults">Reset this scenario</button>
+  </div>
+
+  <div class="summary">
+    <div class="card rev">
+      <div class="label">Total revenue</div>
+      <div class="val" id="sumRev">$0</div>
+      <div class="sub" id="sumRevSub">0 drivers · 0 routes sold</div>
+    </div>
+    <div class="card cost">
+      <div class="label">Total cost</div>
+      <div class="val" id="sumCost">$0</div>
+      <div class="sub" id="sumCostSub">0 line items</div>
+    </div>
+    <div class="card net">
+      <div class="label">Net</div>
+      <div class="val" id="sumNet">$0</div>
+      <div class="sub" id="sumNetSub">Revenue − Cost</div>
+    </div>
+    <div class="card margin">
+      <div class="label">Margin</div>
+      <div class="val" id="sumMargin">0%</div>
+      <div class="sub" id="sumMarginSub">Net / Revenue</div>
+    </div>
+  </div>
+
+  <!-- ============== REVENUE ============== -->
+  <section class="panel">
+    <h2>Revenue</h2>
+
+    <table id="revTable">
+      <thead>
+        <tr class="group"><td colspan="5">Driver tickets (Shopify)</td></tr>
+        <tr>
+          <th>Tier</th>
+          <th class="num">Price</th>
+          <th class="num"># drivers</th>
+          <th class="num">Routes per driver</th>
+          <th class="num">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Route 1 only ($75)</td>
+          <td class="num"><input type="number" class="cell" data-k="rev.r1.price" value="75" min="0" step="1" /></td>
+          <td class="num"><input type="number" class="qty" data-k="rev.r1.drivers" value="0" min="0" step="1" /></td>
+          <td class="num">1</td>
+          <td class="num" data-out="rev.r1.sub"></td>
+        </tr>
+        <tr>
+          <td>Routes 1 + 2 ($135)</td>
+          <td class="num"><input type="number" class="cell" data-k="rev.r2.price" value="135" min="0" step="1" /></td>
+          <td class="num"><input type="number" class="qty" data-k="rev.r2.drivers" value="0" min="0" step="1" /></td>
+          <td class="num">2</td>
+          <td class="num" data-out="rev.r2.sub"></td>
+        </tr>
+        <tr>
+          <td>Routes 1 + 2 + 3 ($185)</td>
+          <td class="num"><input type="number" class="cell" data-k="rev.r3.price" value="185" min="0" step="1" /></td>
+          <td class="num"><input type="number" class="qty" data-k="rev.r3.drivers" value="0" min="0" step="1" /></td>
+          <td class="num">3</td>
+          <td class="num" data-out="rev.r3.sub"></td>
+        </tr>
+        <tr>
+          <td>All-in custom (override)</td>
+          <td class="num"><input type="number" class="cell" data-k="rev.cust.price" value="0" min="0" step="1" /></td>
+          <td class="num"><input type="number" class="qty" data-k="rev.cust.drivers" value="0" min="0" step="1" /></td>
+          <td class="num"><input type="number" class="qty" data-k="rev.cust.routes" value="0" min="0" step="1" /></td>
+          <td class="num" data-out="rev.cust.sub"></td>
+        </tr>
+        <tr class="subtotal">
+          <td colspan="4">Route ticket subtotal</td>
+          <td class="num" data-out="rev.routes.total"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table style="margin-top:14px">
+      <thead>
+        <tr class="group"><td colspan="5">Friday kickoff parking</td></tr>
+        <tr>
+          <th>Lot</th>
+          <th class="num">Price</th>
+          <th class="num">Capacity (cars)</th>
+          <th class="num">Sold</th>
+          <th class="num">Revenue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>In-park (kickoff venue)</td>
+          <td class="num"><input type="number" class="cell" data-k="rev.park.in.price" value="50" min="0" step="1" /></td>
+          <td class="num"><input type="number" class="qty" data-k="rev.park.in.cap" value="20" min="0" step="1" /></td>
+          <td class="num"><input type="number" class="qty" data-k="rev.park.in.sold" value="0" min="0" step="1" /></td>
+          <td class="num" data-out="rev.park.in.sub"></td>
+        </tr>
+        <tr>
+          <td>Reserved front lot</td>
+          <td class="num"><input type="number" class="cell" data-k="rev.park.rs.price" value="30" min="0" step="1" /></td>
+          <td class="num"><input type="number" class="qty" data-k="rev.park.rs.cap" value="40" min="0" step="1" /></td>
+          <td class="num"><input type="number" class="qty" data-k="rev.park.rs.sold" value="0" min="0" step="1" /></td>
+          <td class="num" data-out="rev.park.rs.sub"></td>
+        </tr>
+        <tr class="subtotal">
+          <td colspan="4">Kickoff parking subtotal</td>
+          <td class="num" data-out="rev.park.total"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table style="margin-top:14px">
+      <thead>
+        <tr class="group"><td colspan="3">Other revenue</td></tr>
+        <tr>
+          <th>Source</th>
+          <th class="num">Amount</th>
+          <th class="num">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Raffle ticket sales</td>
+          <td class="num"><input type="number" class="cell" data-k="rev.other.raffle" value="0" min="0" step="1" /></td>
+          <td class="num" data-out="rev.other.raffle.out"></td>
+        </tr>
+        <tr>
+          <td>Sponsorship</td>
+          <td class="num"><input type="number" class="cell" data-k="rev.other.sponsor" value="0" min="0" step="1" /></td>
+          <td class="num" data-out="rev.other.sponsor.out"></td>
+        </tr>
+        <tr>
+          <td>Merch at kickoff</td>
+          <td class="num"><input type="number" class="cell" data-k="rev.other.merch" value="0" min="0" step="1" /></td>
+          <td class="num" data-out="rev.other.merch.out"></td>
+        </tr>
+        <tr class="subtotal">
+          <td colspan="2">Other revenue subtotal</td>
+          <td class="num" data-out="rev.other.total"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table style="margin-top:14px">
+      <tbody>
+        <tr class="total">
+          <td colspan="4">TOTAL REVENUE</td>
+          <td class="num" data-out="rev.total"></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============== COST ============== -->
+  <section class="panel">
+    <h2>Cost</h2>
+    <div class="panel-note">Edit any "Amount" cell. Enter 0 to exclude. All values in USD.</div>
+
+    <table>
+      <thead>
+        <tr class="group"><td colspan="3">Vendors (Friday kickoff)</td></tr>
+        <tr><th>Vendor</th><th class="num">Amount</th><th class="num">Subtotal</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>DJ (live set)</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.dj" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.dj.out"></td></tr>
+        <tr><td>Breakdancers</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.bboys" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.bboys.out"></td></tr>
+        <tr><td>Sound / stage</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.sound" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.sound.out"></td></tr>
+        <tr><td>Security</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.sec" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.sec.out"></td></tr>
+        <tr><td>Porta-potties</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.potties" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.potties.out"></td></tr>
+        <tr class="subtotal"><td colspan="2">Vendor subtotal</td><td class="num" data-out="cost.vendor.total"></td></tr>
+      </tbody>
+    </table>
+
+    <details><summary>Venue &amp; city (Friday kickoff)</summary>
+    <table>
+      <tbody>
+        <tr><td>Park rental</td><td class="num"><input type="number" class="cell zero" data-k="cost.venue.park" value="0" min="0" step="1" /></td><td class="num" data-out="cost.venue.park.out"></td></tr>
+        <tr><td>Parking lot rental (in-park + reserved)</td><td class="num"><input type="number" class="cell zero" data-k="cost.venue.lot" value="0" min="0" step="1" /></td><td class="num" data-out="cost.venue.lot.out"></td></tr>
+        <tr><td>City employee fees</td><td class="num"><input type="number" class="cell zero" data-k="cost.venue.city" value="0" min="0" step="1" /></td><td class="num" data-out="cost.venue.city.out"></td></tr>
+        <tr><td>Police fees</td><td class="num"><input type="number" class="cell zero" data-k="cost.venue.police" value="0" min="0" step="1" /></td><td class="num" data-out="cost.venue.police.out"></td></tr>
+        <tr class="subtotal"><td colspan="2">Venue &amp; city subtotal</td><td class="num" data-out="cost.venue.total"></td></tr>
+      </tbody>
+    </table>
+    </details>
+
+    <details><summary>Operations (Fri + Sat driving)</summary>
+    <table>
+      <tbody>
+        <tr><td>Insurance — GL</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.gl" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.gl.out"></td></tr>
+        <tr><td>Insurance — venue rider</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.venue" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.venue.out"></td></tr>
+        <tr><td>Insurance — auto (lead/sweep)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.auto" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.auto.out"></td></tr>
+        <tr><td>Permits (city + road closure)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.permits" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.permits.out"></td></tr>
+        <tr><td>Radios / comms rental</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.radios" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.radios.out"></td></tr>
+        <tr><td>Medical / first aid</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.medical" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.medical.out"></td></tr>
+        <tr><td>Photography / content</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.photo" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.photo.out"></td></tr>
+        <tr><td>Staff meals (Fri + Sat)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.meals" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.meals.out"></td></tr>
+        <tr><td>Fuel for lead/sweep vehicles</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.fuel" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.fuel.out"></td></tr>
+        <tr class="subtotal"><td colspan="2">Ops subtotal</td><td class="num" data-out="cost.ops.total"></td></tr>
+      </tbody>
+    </table>
+    </details>
+
+    <details><summary>Branded materials</summary>
+    <table>
+      <tbody>
+        <tr><td>T-shirts (staff + driver + sponsor)</td><td class="num"><input type="number" class="cell zero" data-k="cost.brand.tshirts" value="0" min="0" step="1" /></td><td class="num" data-out="cost.brand.tshirts.out"></td></tr>
+        <tr><td>Stickers</td><td class="num"><input type="number" class="cell zero" data-k="cost.brand.stickers" value="0" min="0" step="1" /></td><td class="num" data-out="cost.brand.stickers.out"></td></tr>
+        <tr><td>Windshield banners</td><td class="num"><input type="number" class="cell zero" data-k="cost.brand.banners" value="0" min="0" step="1" /></td><td class="num" data-out="cost.brand.banners.out"></td></tr>
+        <tr><td>Signage (route, parking, kickoff)</td><td class="num"><input type="number" class="cell zero" data-k="cost.brand.signage" value="0" min="0" step="1" /></td><td class="num" data-out="cost.brand.signage.out"></td></tr>
+        <tr class="subtotal"><td colspan="2">Branded materials subtotal</td><td class="num" data-out="cost.brand.total"></td></tr>
+      </tbody>
+    </table>
+    </details>
+
+    <details><summary>Ticket tracking &amp; payment fees</summary>
+    <table>
+      <tbody>
+        <tr><td>Shopify subscription / transaction fees</td><td class="num"><input type="number" class="cell zero" data-k="cost.tick.shopify" value="0" min="0" step="1" /></td><td class="num" data-out="cost.tick.shopify.out"></td></tr>
+        <tr><td>Square reader (kickoff parking + raffle)</td><td class="num"><input type="number" class="cell zero" data-k="cost.tick.square" value="0" min="0" step="1" /></td><td class="num" data-out="cost.tick.square.out"></td></tr>
+        <tr><td>Receipt / waiver printing</td><td class="num"><input type="number" class="cell zero" data-k="cost.tick.print" value="0" min="0" step="1" /></td><td class="num" data-out="cost.tick.print.out"></td></tr>
+        <tr class="subtotal"><td colspan="2">Ticket tracking subtotal</td><td class="num" data-out="cost.tick.total"></td></tr>
+      </tbody>
+    </table>
+    </details>
+
+    <details><summary>Raffle / prizes</summary>
+    <table>
+      <tbody>
+        <tr><td>Prize purchases (cash prizes)</td><td class="num"><input type="number" class="cell zero" data-k="cost.raf.prizes" value="0" min="0" step="1" /></td><td class="num" data-out="cost.raf.prizes.out"></td></tr>
+        <tr><td>Raffle infrastructure</td><td class="num"><input type="number" class="cell zero" data-k="cost.raf.infra" value="0" min="0" step="1" /></td><td class="num" data-out="cost.raf.infra.out"></td></tr>
+        <tr class="subtotal"><td colspan="2">Raffle subtotal</td><td class="num" data-out="cost.raf.total"></td></tr>
+      </tbody>
+    </table>
+    </details>
+
+    <details><summary>Marketing</summary>
+    <table>
+      <tbody>
+        <tr><td>Print (posters, banners)</td><td class="num"><input type="number" class="cell zero" data-k="cost.mkt.print" value="0" min="0" step="1" /></td><td class="num" data-out="cost.mkt.print.out"></td></tr>
+        <tr><td>Digital ads</td><td class="num"><input type="number" class="cell zero" data-k="cost.mkt.digital" value="0" min="0" step="1" /></td><td class="num" data-out="cost.mkt.digital.out"></td></tr>
+        <tr class="subtotal"><td colspan="2">Marketing subtotal</td><td class="num" data-out="cost.mkt.total"></td></tr>
+      </tbody>
+    </table>
+    </details>
+
+    <details><summary>Saturday dinner send-off (TBD)</summary>
+    <table>
+      <tbody>
+        <tr><td>Dinner send-off (placeholder)</td><td class="num"><input type="number" class="cell zero" data-k="cost.dinner" value="0" min="0" step="1" /></td><td class="num" data-out="cost.dinner.out"></td></tr>
+      </tbody>
+    </table>
+    </details>
+
+    <table style="margin-top:14px">
+      <tbody>
+        <tr class="total">
+          <td>TOTAL COST</td>
+          <td class="num" data-out="cost.total"></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============== NET ============== -->
+  <section class="panel">
+    <h2>Net</h2>
+    <table>
+      <tbody>
+        <tr><td>Total revenue</td><td class="num" data-out="rev.total2"></td></tr>
+        <tr><td>Total cost</td><td class="num" data-out="cost.total2"></td></tr>
+        <tr class="total"><td>NET (Revenue − Cost)</td><td class="num" data-out="net"></td></tr>
+      </tbody>
+    </table>
+    <div class="panel-note" id="netNote" style="margin-top:10px"></div>
+  </section>
+
+  <details>
+    <summary>Notes / assumptions</summary>
+    <div style="padding:10px 4px; font-size:13px; color:var(--ink)">
+      <ul style="margin:6px 0; padding-left:20px; line-height:1.7">
+        <li><b>Scenario seeding</b>: defaults below are conservative
+          starting points — set Expected once you have real driver
+          counts, Best Case once you know venue capacity.</li>
+        <li><b>Route ticket pricing</b>: $75 / $135 / $185 hardcoded as
+          defaults per <code>02-pricing-tiers.md</code>. Editable
+          per-cell if you want to test discounts.</li>
+        <li><b>Parking caps</b>: 20 in-park, 40 reserved front — these
+          are physical caps, "Sold" cannot exceed them visually but the
+          subtotal will not auto-cap (overselling will just show as
+          revenue above the cap; that's your problem, not the tool's).</li>
+        <li><b>Walk-in spectators are free</b>, so they contribute zero
+          revenue — no row for them.</li>
+        <li><b>All-in custom</b> tier: for drivers paying something not
+          matching the 3-tier (e.g. comped entries). Set Price + Drivers
+          + Routes per driver and it computes.</li>
+        <li><b>Reset</b> clears the active scenario back to its
+          defaults. Other scenarios are unaffected.</li>
+        <li><b>Numbers persist</b> via <code>localStorage</code> on this
+          browser only. Clearing site data wipes them — copy out to a
+          sheet if you need a real backup.</li>
+      </ul>
+    </div>
+  </details>
+</main>
+
+<script>
+  "use strict";
+
+  // -------- scenario defaults --------
+  const SCENARIOS = {
+    c: { name: "Conservative", seed: { drivers: 12, avgRoutes: 2, parkFill: 0.5 } },
+    e: { name: "Expected",     seed: { drivers: 20, avgRoutes: 2.3, parkFill: 0.85 } },
+    b: { name: "Best Case",    seed: { drivers: 35, avgRoutes: 2.6, parkFill: 1.0 } },
+  };
+
+  // Defaults (per-scenario for the items that vary; flat for the rest)
+  function defaultState(scen) {
+    const s = SCENARIOS[scen].seed;
+    // Distribute drivers across tiers roughly by avgRoutes
+    // r1 = drivers taking 1 route; r2 = drivers taking 2; r3 = drivers taking 3.
+    // cust = 0 by default.
+    let r3 = Math.round(s.drivers * 0.30);
+    let r2 = Math.round(s.drivers * 0.45);
+    let r1 = Math.max(0, s.drivers - r2 - r3);
+    return {
+      // revenue
+      "rev.r1.price": 75,
+      "rev.r1.drivers": r1,
+      "rev.r2.price": 135,
+      "rev.r2.drivers": r2,
+      "rev.r3.price": 185,
+      "rev.r3.drivers": r3,
+      "rev.cust.price": 0,
+      "rev.cust.drivers": 0,
+      "rev.cust.routes": 0,
+      "rev.park.in.price": 50, "rev.park.in.cap": 20,
+      "rev.park.in.sold": Math.min(20, Math.round(20 * s.parkFill)),
+      "rev.park.rs.price": 30, "rev.park.rs.cap": 40,
+      "rev.park.rs.sold": Math.min(40, Math.round(40 * s.parkFill)),
+      "rev.other.raffle": scen === "c" ? 200 : scen === "e" ? 600 : 1200,
+      "rev.other.sponsor": scen === "c" ? 0 : scen === "e" ? 1500 : 5000,
+      "rev.other.merch": scen === "c" ? 0 : scen === "e" ? 300 : 800,
+      // cost (all zero by default; you fill in as quotes come in)
+      "cost.vendor.dj": 0,
+      "cost.vendor.bboys": 0,
+      "cost.vendor.sound": 0,
+      "cost.vendor.sec": 0,
+      "cost.vendor.potties": 0,
+      "cost.venue.park": 0,
+      "cost.venue.lot": 0,
+      "cost.venue.city": 0,
+      "cost.venue.police": 0,
+      "cost.ops.gl": 0,
+      "cost.ops.venue": 0,
+      "cost.ops.auto": 0,
+      "cost.ops.permits": 0,
+      "cost.ops.radios": 0,
+      "cost.ops.medical": 0,
+      "cost.ops.photo": 0,
+      "cost.ops.meals": 0,
+      "cost.ops.fuel": 0,
+      "cost.brand.tshirts": 0,
+      "cost.brand.stickers": 0,
+      "cost.brand.banners": 0,
+      "cost.brand.signage": 0,
+      "cost.tick.shopify": 0,
+      "cost.tick.square": 0,
+      "cost.tick.print": 0,
+      "cost.raf.prizes": 0,
+      "cost.raf.infra": 0,
+      "cost.mkt.print": 0,
+      "cost.mkt.digital": 0,
+      "cost.dinner": 0,
+    };
+  }
+
+  const LS_KEY = "sss_apnl_v1";
+
+  function loadAll() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }
+    catch (e) { return {}; }
+  }
+  function saveAll(data) {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch (e) {}
+  }
+  function loadScen(scen) {
+    const all = loadAll();
+    return all[scen] || defaultState(scen);
+  }
+  function saveScen(scen, state) {
+    const all = loadAll();
+    all[scen] = state;
+    saveAll(all);
+  }
+  function resetScen(scen) {
+    const all = loadAll();
+    delete all[scen];
+    saveAll(all);
+    populate(scen);
+  }
+
+  // -------- DOM wiring --------
+  let activeScen = "c";
+
+  function $(sel, root=document) { return root.querySelector(sel); }
+  function $$(sel, root=document) { return [...root.querySelectorAll(sel)]; }
+
+  function fmt(n) {
+    if (!isFinite(n)) n = 0;
+    const sign = n < 0 ? "-" : "";
+    const a = Math.abs(Math.round(n));
+    return sign + "$" + a.toLocaleString("en-US");
+  }
+  function out(key, val) {
+    const el = document.querySelector(`[data-out="${key}"]`);
+    if (el) el.textContent = fmt(val);
+  }
+  function readNum(key) {
+    const el = document.querySelector(`[data-k="${key}"]`);
+    if (!el) return 0;
+    const v = parseFloat(el.value);
+    return isFinite(v) ? v : 0;
+  }
+  function writeNum(key, val) {
+    const el = document.querySelector(`[data-k="${key}"]`);
+    if (el) el.value = val;
+  }
+
+  function compute() {
+    // Revenue: route tiers
+    const r1 = readNum("rev.r1.price") * readNum("rev.r1.drivers");
+    const r2 = readNum("rev.r2.price") * readNum("rev.r2.drivers");
+    const r3 = readNum("rev.r3.price") * readNum("rev.r3.drivers");
+    const cust = readNum("rev.cust.price") * readNum("rev.cust.drivers") * Math.max(1, readNum("rev.cust.routes"));
+    out("rev.r1.sub", r1);
+    out("rev.r2.sub", r2);
+    out("rev.r3.sub", r3);
+    out("rev.cust.sub", cust);
+    const routesTotal = r1 + r2 + r3 + cust;
+    out("rev.routes.total", routesTotal);
+
+    // Parking
+    const pin = readNum("rev.park.in.price") * readNum("rev.park.in.sold");
+    const prs = readNum("rev.park.rs.price") * readNum("rev.park.rs.sold");
+    out("rev.park.in.sub", pin);
+    out("rev.park.rs.sub", prs);
+    const parkTotal = pin + prs;
+    out("rev.park.total", parkTotal);
+
+    // Other revenue
+    const ra = readNum("rev.other.raffle");
+    const sp = readNum("rev.other.sponsor");
+    const me = readNum("rev.other.merch");
+    out("rev.other.raffle.out", ra);
+    out("rev.other.sponsor.out", sp);
+    out("rev.other.merch.out", me);
+    const otherTotal = ra + sp + me;
+    out("rev.other.total", otherTotal);
+
+    const revTotal = routesTotal + parkTotal + otherTotal;
+    out("rev.total", revTotal);
+    out("rev.total2", revTotal);
+
+    // Cost
+    const costGroups = [
+      ["vendor", ["dj","bboys","sound","sec","potties"]],
+      ["venue",  ["park","lot","city","police"]],
+      ["ops",    ["gl","venue","auto","permits","radios","medical","photo","meals","fuel"]],
+      ["brand",  ["tshirts","stickers","banners","signage"]],
+      ["tick",   ["shopify","square","print"]],
+      ["raf",    ["prizes","infra"]],
+      ["mkt",    ["print","digital"]],
+    ];
+    let costTotal = 0;
+    let costLines = 0;
+    for (const [group, keys] of costGroups) {
+      let sub = 0;
+      for (const k of keys) {
+        const v = readNum(`cost.${group}.${k}`);
+        out(`cost.${group}.${k}.out`, v);
+        sub += v;
+        if (v > 0) costLines++;
+      }
+      out(`cost.${group}.total`, sub);
+      costTotal += sub;
+    }
+    const dinner = readNum("cost.dinner");
+    out("cost.dinner.out", dinner);
+    costTotal += dinner;
+    if (dinner > 0) costLines++;
+
+    out("cost.total", costTotal);
+    out("cost.total2", costTotal);
+
+    // Net
+    const net = revTotal - costTotal;
+    out("net", net);
+
+    // Driver count + route count for summary
+    const drivers = readNum("rev.r1.drivers") + readNum("rev.r2.drivers")
+                  + readNum("rev.r3.drivers") + readNum("rev.cust.drivers");
+    const routes = readNum("rev.r1.drivers") * 1
+                + readNum("rev.r2.drivers") * 2
+                + readNum("rev.r3.drivers") * 3
+                + readNum("rev.cust.drivers") * Math.max(0, readNum("rev.cust.routes"));
+
+    // Summary cards
+    $("#sumRev").textContent = fmt(revTotal);
+    $("#sumRevSub").textContent = `${drivers} drivers · ${routes} routes sold`;
+    $("#sumCost").textContent = fmt(costTotal);
+    $("#sumCostSub").textContent = `${costLines} line items with values`;
+    $("#sumNet").textContent = fmt(net);
+    $("#sumNetSub").textContent = net >= 0 ? "Net positive" : "Net negative";
+    const margin = revTotal > 0 ? (net / revTotal) * 100 : 0;
+    $("#sumMargin").textContent = `${margin.toFixed(1)}%`;
+    $("#sumMarginSub").textContent = `Net / Revenue`;
+
+    // Net note
+    let note = "";
+    if (revTotal === 0 && costTotal === 0) {
+      note = "Fill in your expected numbers to see projections.";
+    } else if (net < 0) {
+      note = `Currently ${fmt(Math.abs(net))} in the red. Either raise ticket volume, trim cost, or model sponsor lift.`;
+    } else if (margin < 15) {
+      note = `Margins are thin (${margin.toFixed(1)}%). Aim for at least 20% to absorb weather/incident risk.`;
+    } else {
+      note = `Healthy margin (${margin.toFixed(1)}%). Reserve 10–15% for weather / refund / contingency.`;
+    }
+    $("#netNote").textContent = note;
+  }
+
+  function populate(scen) {
+    activeScen = scen;
+    const state = loadScen(scen);
+    // Reset zero-state inputs first
+    $$(".cell.zero, .qty").forEach(el => { if (el.value === "" || el.classList.contains("zero")) {} });
+    // Write values
+    for (const [k, v] of Object.entries(state)) {
+      writeNum(k, v);
+    }
+    // Update scenario tag color
+    const tag = $("#scenTag");
+    tag.dataset.s = scen;
+    tag.textContent = SCENARIOS[scen].name;
+    // Update active tab
+    $$(".scenarios button[data-s]").forEach(b => b.classList.toggle("active", b.dataset.s === scen));
+    compute();
+  }
+
+  function attach() {
+    $$('input[data-k]').forEach(el => {
+      el.addEventListener("input", () => {
+        // Persist this scenario's snapshot
+        const snap = {};
+        $$('input[data-k]').forEach(e => { snap[e.dataset.k] = parseFloat(e.value) || 0; });
+        saveScen(activeScen, snap);
+        compute();
+      });
+    });
+    $$('.scenarios button[data-s]').forEach(b => {
+      b.addEventListener("click", () => populate(b.dataset.s));
+    });
+    $("#resetBtn").addEventListener("click", () => {
+      if (confirm(`Reset "${SCENARIOS[activeScen].name}" scenario to defaults? This wipes your edits for this scenario only.`)) {
+        resetScen(activeScen);
+      }
+    });
+  }
+
+  attach();
+  populate("c");
+</script>
+</body>
+</html>
