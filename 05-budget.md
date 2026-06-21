@@ -67,6 +67,35 @@ TBD — depends on driver count, route bundle mix, and sponsorship.
 | Fuel for lead / sweep vehicles | TBD | No |
 | **Ops subtotal** | **TBD** | |
 
+### Venue & city (Friday kickoff)
+
+| Item | Est. cost | Quote? |
+|---|---|---|
+| Park rental | TBD | No |
+| Parking lot rental (in-park + reserved front) | TBD | No |
+| City employee fees | TBD | No |
+| Police fees | TBD | No |
+| **Venue & city subtotal** | **TBD** | |
+
+### Branded materials
+
+| Item | Est. cost | Notes |
+|---|---|---|
+| T-shirts (staff + driver + sponsor) | TBD | Quantities TBD |
+| Stickers | TBD | Cheapest swag; budget ~$1/each |
+| Windshield banners | TBD | Per-car, drivers only |
+| Signage (route, parking, kickoff venue) | TBD | Print + install |
+| **Branded materials subtotal** | **TBD** | |
+
+### Ticket tracking
+
+| Item | Est. cost | Notes |
+|---|---|---|
+| Shopify (or alternative) subscription / transaction fees | TBD | % per sale |
+| Square reader (kickoff parking + raffle) | TBD | Hardware |
+| Receipt / waiver printing | TBD | |
+| **Ticket tracking subtotal** | **TBD** | |
+
 ### Raffle / prizes
 
 | Item | Est. cost | Notes |

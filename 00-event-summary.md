@@ -12,13 +12,16 @@ is a separate kickoff event in a park (see `03-friday-kickoff.md`).
 
 ## When
 
-| Day | Start | End | Notes |
-|---|---|---|---|
-| Friday Oct 2, 2026 | Morning (TBD exact time) | End of day driving | Packs run continuous |
-| Friday Oct 2, 2026 | 6:00 PM CT | 9:00 PM CT | Friday kickoff event |
-| Saturday Oct 3, 2026 | Morning (TBD) | End of day | Final packs complete |
+| Day | Start | End | Block | Notes |
+|---|---|---|---|---|
+| Friday Oct 2, 2026 | 10:00 AM CT | 4:00 PM CT | Route 1 (long, 6 hrs) | One continuous pack run |
+| Friday Oct 2, 2026 | 6:00 PM CT | 9:00 PM CT | Friday kickoff | Park, vendors, raffle |
+| Saturday Oct 3, 2026 | 8:00 AM CT | 1:00 PM CT | Route 2 (short) | Morning pack |
+| Saturday Oct 3, 2026 | 2:00 PM CT | 5:00 PM CT | Route 3 (short) | Afternoon pack |
+| Saturday Oct 3, 2026 | Evening (TBD) | TBD | Dinner send-off | Format TBD |
 
-All times Central.
+All times Central. Saturday is a 2-route day (morning + afternoon)
+flanking a 1-hour break from 1:00–2:00 PM for lunch / reset.
 
 ## Where
 
@@ -65,9 +68,22 @@ Full pricing in `02-pricing-tiers.md`.
 
 ## Decisions still open
 
-See `06-open-questions.md`. Top three right now:
+See `06-open-questions.md`. Top blockers right now:
 
-1. Exact route list and pack size per route.
+1. Route list (still TBD — we have 3 slots and a 3-tier pricing
+   matrix, need to pick the actual routes).
 2. Friday kickoff event name (cannot reuse "TougeCon Underground" per
    root `AGENTS.md` naming rule).
-3. Friday morning start time and pack cadence.
+
+## Brand vs. admin entity
+
+- **Event brand:** TougeCon. Use "TougeCon Super Special Stage" or
+  "TougeCon SSS" in marketing copy.
+- **Admin / accounting / repo / vendor contracts:** Neokata. The repo
+  is `Neokata/super-special-stage-planning`. Vendor invoices are paid
+  by Neokata.
+
+The owner controls both entities, so the practical effect is: contracts
+and expenses route through Neokata; brand and customer-facing copy
+routes through TougeCon. Do not mix the two in a single document —
+vendor agreements say Neokata, marketing says TougeCon.

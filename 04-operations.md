@@ -6,17 +6,23 @@ this file is everything else.
 
 ## Run of show (skeleton)
 
-| When | Day | Activity | Owner |
+| When (CT) | Day | Activity | Owner |
 |---|---|---|---|
-| TBD | Fri morning | Driver check-in opens | TBD |
-| TBD | Fri morning | First pack departs | TBD |
-| TBD | Fri afternoon | Final Fri pack returns | TBD |
+| 9:00 AM | Fri | Staff arrives, route prep | TBD |
+| 9:30 AM | Fri | Driver check-in opens | TBD |
+| 10:00 AM | Fri | Route 1 (long) — first pack departs | TBD |
+| 4:00 PM | Fri | Route 1 — final pack returns | TBD |
 | 5:00 PM | Fri | Staff arrives for kickoff setup | TBD |
 | 6:00–9:00 PM | Fri | Kickoff event (see `03-friday-kickoff.md`) | TBD |
-| TBD | Sat morning | Driver check-in opens | TBD |
-| TBD | Sat morning | First pack departs | TBD |
-| TBD | Sat afternoon | Final pack returns, event concludes | TBD |
-| TBD | Sat evening | Load-out, lot cleanup | TBD |
+| 7:30 AM | Sat | Staff arrives, route prep | TBD |
+| 7:30 AM | Sat | Driver check-in opens | TBD |
+| 8:00 AM | Sat | Route 2 (short) — first pack departs | TBD |
+| 1:00 PM | Sat | Route 2 — final pack returns; lunch break | TBD |
+| 1:30 PM | Sat | Driver check-in re-opens for Route 3 | TBD |
+| 2:00 PM | Sat | Route 3 (short) — first pack departs | TBD |
+| 5:00 PM | Sat | Route 3 — final pack returns | TBD |
+| TBD | Sat evening | Dinner send-off (format TBD) | TBD |
+| TBD | Sat | Load-out, lot cleanup | TBD |
 
 ## Staffing (driving days)
 

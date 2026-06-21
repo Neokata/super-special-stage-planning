@@ -39,17 +39,14 @@ and `route_assignments` table already exist from TCSS26.
 **Maximum kickoff parking revenue (paid lots only):**
 20 × $50 + 40 × $30 = $1,000 + $1,200 = **$2,200**
 
-## Open
+## Spectator policy (resolved)
 
-- **Spectator question:** Is driving-in the only way to attend the
-  Friday kickoff, or can walking-in spectators attend for free?
-  Currently reads as: drive-in = $50 (or $30 reserved), walk-in = free.
-  Confirm.
-- **Shopify product structure:** One SKU per route? A bundle SKU? Or
-  a single "build your pack" product with custom line items? Need to
-  decide before the store is set up.
-- **Refund policy** if a route is cancelled (weather, hazard, etc.).
-- **Raffle / prize ticket sales:** Separate from parking? Sold at
-  the gate? Online pre-sale? See `03-friday-kickoff.md`.
-- **Is the kickoff parking a separate Shopify product, or sold at
-  the gate (cash / Square)?** TBD.
+- **Walk-in spectators at the Friday kickoff are free.** We don't
+  try to count them — too much overhead, low signal. The $50/$30
+  parking charges are for *vehicles* that drive in.
+- This means we will NOT be able to give an exact headcount for the
+  kickoff. If marketing needs a number for permits or fire code, use
+  a reasonable estimate (e.g. 2.5x paid-park count) and label it as
+  such.
+- Implication: raffle / merch sales at the kickoff are cash/Square
+  only, no pre-sale inventory reconciliation needed.

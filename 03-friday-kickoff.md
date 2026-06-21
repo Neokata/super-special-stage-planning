@@ -28,9 +28,9 @@ operations. See `04-operations.md` for the full weekend.
 
 Max kickoff paid-parking revenue: $2,200 (see `02-pricing-tiers.md`).
 
-**Open:** Can walking-in spectators attend for free? Or is the $50/car
-the only entry? See `02-pricing-tiers.md` §"Open" for the same
-question, which gates several other decisions.
+**Resolved (2026-06-21):** Walk-in spectators attend for free. The
+$50/$30 charges are for *vehicles* that drive in. See
+`02-pricing-tiers.md` §"Spectator policy" for the full reasoning.
 
 ## Vendors
 

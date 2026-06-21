@@ -22,13 +22,15 @@
 
 ## Route list
 
-| # | Route name | Type | Length | Pack size | Lead driver | Hazards noted |
-|---|---|---|---|---|---|---|
-| 1 | TBD | TBD | TBD | TBD | TBD | TBD |
-| 2 | TBD | TBD | TBD | TBD | TBD | TBD |
-| 3 | TBD | TBD | TBD | TBD | TBD | TBD |
-| 4 | TBD | TBD | TBD | TBD | TBD | TBD |
-| 5+ | TBD | TBD | TBD | TBD | TBD | TBD |
+**3 routes total: 1 long (Friday) + 2 short (Saturday).** This is
+the minimum to support the 3-tier $75/$60/$50 pricing in
+`02-pricing-tiers.md`.
+
+| # | Day | Time (CT) | Duration | Type | Name | Length | Pack size | Lead driver | Hazards noted |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | Fri Oct 2 | 10:00 AM – 4:00 PM | 6 hrs | Long | TBD | TBD | TBD | TBD | TBD |
+| 2 | Sat Oct 3 | 8:00 AM – 1:00 PM | 5 hrs | Short | TBD | TBD | TBD | TBD | TBD |
+| 3 | Sat Oct 3 | 2:00 PM – 5:00 PM | 3 hrs | Short | TBD | TBD | TBD | TBD | TBD |
 
 Once routes are selected, polylines go into the shared
 `route_polyline` table (see
