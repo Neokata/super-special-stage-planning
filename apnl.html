@@ -554,7 +554,7 @@
         <tr><td>Photography / content</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.photo" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.photo.out"></td></tr>
         <tr><td>Staff meals (Fri + Sat)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.meals" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.meals.out"></td></tr>
         <tr><td>Fuel for lead/sweep vehicles</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.fuel" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.fuel.out"></td></tr>
-        <tr><td>Lead + sweep driver pay (Fri 2+2; Sat TBD)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.driverpay" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.driverpay.out"></td></tr>
+        <tr><td>Lead + sweep driver pay (14 staff × $300 default: 4 Fri + 10 Sat)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.driverpay" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.driverpay.out"></td></tr>
         <tr class="subtotal"><td colspan="2">Ops subtotal</td><td class="num" data-out="cost.ops.total"></td></tr>
       </tbody>
     </table>
@@ -662,9 +662,15 @@
           if Friday is sold out at 60 but Saturday is at 50%, each slider
           reflects that.</li>
         <li><b>Friday pack model</b>: 2 packs of 30, 2 lead + 2 sweep
-          drivers. Saturday pack size TBD — affects lead/sweep driver
-          pay and fuel cost. Edit the "Lead + sweep driver pay" cell
-          in Ops to model it.</li>
+          drivers (4 driver-pays for Friday).</li>
+        <li><b>Saturday pack model</b>: 5 different physical routes,
+          each with Pack A (AM) and Pack B (PM) of 15 cars. Per route:
+          1 lead + 1 tail. <b>5 routes × 2 staff = 10 driver-pays
+          for Saturday.</b> The same staff works both AM and PM for
+          their route — one pay per staff per day, not per session.</li>
+        <li><b>Total weekend staff drivers: 14</b> (4 Fri + 10 Sat).
+          At $300/staff = $4,200 default. Edit the "Lead + sweep
+          driver pay" cell in Ops to model different rates.</li>
         <li><b>Scenarios</b> (Conservative / Expected / Best Case) only
           affect <i>cost</i> defaults — the fill sliders are the single
           source of truth for revenue modeling. Switch scenarios when
@@ -718,7 +724,7 @@
         "cost.ops.photo": 0,
         "cost.ops.meals": 300,
         "cost.ops.fuel": 100,
-        "cost.ops.driverpay": 1200, // Fri 4 × $300
+        "cost.ops.driverpay": 4200, // 14 staff × $300 (4 Fri + 10 Sat; Sat staff work both AM+PM)
         // branded — bare minimum
         "cost.brand.tshirts": 600,
         "cost.brand.stickers": 100,
@@ -764,7 +770,7 @@
         "cost.ops.photo": 300,
         "cost.ops.meals": 600,
         "cost.ops.fuel": 250,
-        "cost.ops.driverpay": 2400, // 4 Fri + 4 Sat (estimate, depends on Sat pack size)
+        "cost.ops.driverpay": 4200, // 14 staff × $300 (same driver, both Sat sessions)
         "cost.brand.tshirts": 1000,
         "cost.brand.stickers": 200,
         "cost.brand.banners": 600,
@@ -805,7 +811,7 @@
         "cost.ops.photo": 800,
         "cost.ops.meals": 1000,
         "cost.ops.fuel": 400,
-        "cost.ops.driverpay": 3600, // 4 Fri + 8 Sat (larger Sat staffing)
+        "cost.ops.driverpay": 4200, // Same as Expected: 14 staff × $300
         "cost.brand.tshirts": 1500,
         "cost.brand.stickers": 300,
         "cost.brand.banners": 1200,
@@ -828,7 +834,7 @@
   };
 
   // -------- storage --------
-  const LS_KEY = "sss_apnl_v3";
+  const LS_KEY = "sss_apnl_v4";
 
   function loadAll() {
     try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }

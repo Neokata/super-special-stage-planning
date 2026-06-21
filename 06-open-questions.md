@@ -33,6 +33,11 @@ blocks other work).
 - ✅ Sellout modeling: `apnl.html` shows max potential at 100% fill
   with per-slot fill sliders (independent) to model partial sellout.
   Default fill is 100% on all slots.
+- ✅ Saturday pack model: 5 different physical routes, each with
+  Pack A (AM) and Pack B (PM) of 15 cars. 1 lead + 1 tail per route.
+  Same staff works both AM and PM for their route.
+- ✅ Total weekend staff drivers: 14 (4 Fri + 10 Sat). At $300/staff
+  = $4,200 default in driver pay.
 
 ## Pricing & tickets
 

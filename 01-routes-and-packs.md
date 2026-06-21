@@ -31,20 +31,22 @@
 ## Pack model
 
 - **Friday:** 2 packs of 30 cars, 2 lead drivers + 2 sweep drivers.
-  This is heavier per-car staffing than Saturday because Friday is the
-  long route (6 hrs) and the smaller pack size means each lead/sweep
-  pair is responsible for only 30 cars.
-- **Saturday morning + afternoon:** Pack size TBD. With 150 cars per
-  slot, options are:
-  - 5 packs of 30 (5 leads + 5 sweeps = 10 staff drivers for Sat AM,
-    10 for Sat PM, 20 total)
-  - 10 packs of 15 (more staff, smaller packs)
-  - 6 packs of 25 (middle ground)
-  - 3 packs of 50 (large packs, fewer staff, harder to manage)
-- Pack decision impacts cost significantly — more packs = more
-  per-pack staffing (gas, meals, comms) but easier route management.
-  See `04-operations.md` and `05-budget.md` once the Sat pack size
-  is picked.
+  Each lead/sweep driver works the Friday long route only. **4
+  driver-pays for Friday.**
+- **Saturday:** 5 different physical routes, each run twice (Pack A
+  in the morning session, Pack B in the afternoon session). Per
+  route: 1 lead + 1 tail/sweep driver. **Per route: 2 staff drivers.**
+  Same lead/tail team runs both sessions of their route (AM then PM),
+  so it's one pay per staff per day, not per session. **5 routes × 2
+  staff = 10 driver-pays for Saturday.**
+- **Total weekend staff drivers: 4 (Fri) + 10 (Sat) = 14.**
+- **Per-pack: 15 cars, 1 lead, 1 tail.** Each pack has 15 cars
+  regardless of which route.
+- The "Pack A / Pack B" distinction is a timing offset (AM session vs
+  PM session) on the *same* physical route — not different routes.
+- **150 cars/session = 10 packs × 15 cars.** Per Saturday day (AM + PM
+  combined): 300 cars total across all 5 routes. **Per Saturday
+  session: 150 cars.**
 
 Once routes are selected, polylines go into the shared
 `route_polyline` table (see
@@ -66,11 +68,18 @@ can be adapted.
 
 ## Route list
 
-| # | Day | Time (CT) | Duration | Cap | Price | Pack model | Name | Length | Lead | Sweep | Hazards |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | Fri Oct 2 | 10:00 AM – 4:00 PM | 6 hrs | 60 | $150 | 2×30, 2 lead + 2 sweep | TBD | TBD | TBD | TBD | TBD |
-| 2 | Sat Oct 3 | 8:00 AM – 1:00 PM | 5 hrs | 150 | $75 | TBD | TBD | TBD | TBD | TBD | TBD |
-| 3 | Sat Oct 3 | 2:00 PM – 5:00 PM | 3 hrs | 150 | $75 | TBD | TBD | TBD | TBD | TBD | TBD |
+| # | Day | Time (CT) | Duration | Cap | Price | Pack model | Routes (different roads) | Name | Length | Lead | Sweep | Hazards |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | Fri Oct 2 | 10:00 AM – 4:00 PM | 6 hrs | 60 | $150 | 2×30, 2 lead + 2 sweep | 1 | TBD | TBD | TBD | TBD | TBD |
+| 2 | Sat Oct 3 | 8:00 AM – 1:00 PM | 5 hrs | 150 | $75 | 5 routes × 2 packs (A+B) of 15, 10 lead + 10 sweep | 5 | TBD | TBD | TBD | TBD | TBD |
+| 3 | Sat Oct 3 | 2:00 PM – 5:00 PM | 3 hrs | 150 | $75 | Same staff as Route 2, just Pack B vs Pack A timing | 5 | TBD | TBD | TBD | TBD | TBD |
+
+**Saturday route count: 5 different physical routes.** Each route
+runs twice — Pack A in the AM session, Pack B in the PM session. Same
+lead/sweep team per route works both sessions.
+
+**Saturday staff:** 5 routes × (1 lead + 1 tail) = 10 staff drivers
+working both sessions. Saturday pack size: 15 cars.
 
 ## Sweep & safety
 
