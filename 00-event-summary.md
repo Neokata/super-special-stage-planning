@@ -34,10 +34,12 @@ flanking a 1-hour break from 1:00–2:00 PM for lunch / reset.
 
 ## Scale (initial)
 
-- **Initial car count:** 20 in-park on Friday night; route capacity
-  per pack TBD.
-- **Growth posture:** Add capacity as demand warrants; ticket structure
-  supports multi-day, multi-route drivers.
+- **Friday route cap:** 60 cars (premium slot, $150/car).
+- **Saturday AM + PM route caps:** 150 cars each ($75/car).
+- **Total route-ticket ceiling:** 360 cars. **Max potential route
+  revenue at 100% sellout: $31,500.**
+- **Walk-in spectators at Friday kickoff:** Free, uncounted.
+- **Growth posture:** Add capacity as demand warrants.
 
 ## Format (vs. prior events)
 
@@ -56,15 +58,16 @@ SQL.
 
 | Item | Price |
 |---|---|
-| Route 1 | $75 |
-| Route 2 | $60 |
-| Route 3+ | $50 each |
-| Friday kickoff in-park parking | $50 / car |
-| Friday kickoff reserved lot | $30 / car (40 spaces) |
+| Route 1 (Friday morning, long) | $150 / car (cap 60) |
+| Route 2 (Saturday morning, short) | $75 / car (cap 150) |
+| Route 3 (Saturday afternoon, short) | $75 / car (cap 150) |
+| Friday kickoff in-park parking | $50 / car (cap 20) |
+| Friday kickoff reserved lot | $30 / car (cap 40) |
 | Tyson Foods lot | Free |
 | City parking | Free |
 
-Full pricing in `02-pricing-tiers.md`.
+**No discounts.** A driver taking all 3 routes pays $300. Full
+pricing in `02-pricing-tiers.md`.
 
 ## Decisions still open
 
