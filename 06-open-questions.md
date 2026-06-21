@@ -18,14 +18,21 @@ blocks other work).
 - ✅ Spectator policy: walk-ins free. See `02-pricing-tiers.md`.
 - ✅ Friday schedule: 10:00–16:00 long route; 18:00–21:00 kickoff.
 - ✅ Saturday schedule: 08:00–13:00 + 14:00–17:00 (1-hour break).
-- ✅ Route count: 1 long + 2 short = 3 routes (supports 3-tier pricing).
+- ✅ Route count: 1 long + 2 short = 3 routes (no discounts).
 - ✅ Admin entity for contracts / expenses: Neokata. Brand: TougeCon.
-- ✅ Route cap: 150 cars per route (set 2026-06-21).
-  - Total route-ticket ceiling: 450 driver-tickets.
-  - At 30/45/25 bundle mix, max route revenue = **$58,115**.
-  - + $2,200 parking + other = **max potential ~$60,515** (Conservative other).
+- ✅ Per-slot capacity (set 2026-06-21):
+  - Friday AM long: 60 cars × $150 = max $9,000
+  - Saturday AM short: 150 cars × $75 = max $11,250
+  - Saturday PM short: 150 cars × $75 = max $11,250
+  - **Total route max potential: $31,500 (360 cars)**
+  - + $2,200 parking + other = **max potential ~$33,900** (Conservative other)
+- ✅ No discounts — strictly per-slot pricing. Replaces the older
+  3-tier $75/$60/$50 bundle model.
+- ✅ Friday pack model: 2 packs of 30, 2 lead + 2 sweep drivers.
+- ✅ Saturday pack size: still TBD (5×30 / 10×15 / 6×25 / 3×50).
 - ✅ Sellout modeling: `apnl.html` shows max potential at 100% fill
-  with a fill % slider to model partial sellout. Default fill is 100%.
+  with per-slot fill sliders (independent) to model partial sellout.
+  Default fill is 100% on all slots.
 
 ## Pricing & tickets
 

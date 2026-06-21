@@ -15,28 +15,36 @@
 
 ## Capacity (initial)
 
-- **Route cap: 150 cars per route.** Set 2026-06-21.
-- A single driver-ticket = one car entry for one route.
-- The Friday long route and the two Saturday short routes each
-  cap independently at 150 cars. So **total route-ticket ceiling =
-  150 cars × 3 routes = 450 driver-route-tickets** (though most
-  drivers will buy the multi-route bundle, so total *tickets sold*
-  will be lower than 450).
-- Pack size per route is still TBD and will be set by road
-  conditions, sweep vehicle, and lead driver availability. Packs
-  run sequentially within a route.
+- **Route cap per slot** (set 2026-06-21):
+  - Friday morning (long, 6 hrs): **60 cars** at **$150/car**
+  - Saturday morning (short, 5 hrs): **150 cars** at **$75/car**
+  - Saturday afternoon (short, 3 hrs): **150 cars** at **$75/car**
+- **Total route-ticket ceiling: 60 + 150 + 150 = 360 driver-tickets.**
+- **Max potential route revenue at 100% sellout: $9,000 + $11,250 +
+  $11,250 = $31,500.** (Down from the old $58k ceiling that assumed
+  everyone bought the all-in $185 bundle.)
+- **No discounts.** Each slot is a single price. A driver taking all
+  3 slots pays $300 ($150 + $75 + $75).
+- **No stepped pricing.** Replaces the old $75/$60/$50 tier model
+  that was based on multi-route bundles.
 
-## Route list
+## Pack model
 
-**3 routes total: 1 long (Friday) + 2 short (Saturday).** This is
-the minimum to support the 3-tier $75/$60/$50 pricing in
-`02-pricing-tiers.md`.
-
-| # | Day | Time (CT) | Duration | Type | Name | Length | Pack size | Lead driver | Hazards noted |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | Fri Oct 2 | 10:00 AM – 4:00 PM | 6 hrs | Long | TBD | TBD | TBD | TBD | TBD |
-| 2 | Sat Oct 3 | 8:00 AM – 1:00 PM | 5 hrs | Short | TBD | TBD | TBD | TBD | TBD |
-| 3 | Sat Oct 3 | 2:00 PM – 5:00 PM | 3 hrs | Short | TBD | TBD | TBD | TBD | TBD |
+- **Friday:** 2 packs of 30 cars, 2 lead drivers + 2 sweep drivers.
+  This is heavier per-car staffing than Saturday because Friday is the
+  long route (6 hrs) and the smaller pack size means each lead/sweep
+  pair is responsible for only 30 cars.
+- **Saturday morning + afternoon:** Pack size TBD. With 150 cars per
+  slot, options are:
+  - 5 packs of 30 (5 leads + 5 sweeps = 10 staff drivers for Sat AM,
+    10 for Sat PM, 20 total)
+  - 10 packs of 15 (more staff, smaller packs)
+  - 6 packs of 25 (middle ground)
+  - 3 packs of 50 (large packs, fewer staff, harder to manage)
+- Pack decision impacts cost significantly — more packs = more
+  per-pack staffing (gas, meals, comms) but easier route management.
+  See `04-operations.md` and `05-budget.md` once the Sat pack size
+  is picked.
 
 Once routes are selected, polylines go into the shared
 `route_polyline` table (see
@@ -56,13 +64,13 @@ can be adapted.
   in `5-Infra-Reference/tougecon-supabase/migrations/20260611000001_route_assignments.sql`).
 - Driver sees their pack assignment in the drive app.
 
-## Sellout economics
+## Route list
 
-- 150 cars / route × 3 routes = 450 driver-route-tickets available
-  in total.
-- At the all-in $185 bundle, max route revenue = 150 × $185 = **$27,750**.
-- The `apnl.html` P&L models fill % with an assumed bundle mix of
-  ~30% / ~45% / ~25% (1-route / 2-route / 3-route).
+| # | Day | Time (CT) | Duration | Cap | Price | Pack model | Name | Length | Lead | Sweep | Hazards |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | Fri Oct 2 | 10:00 AM – 4:00 PM | 6 hrs | 60 | $150 | 2×30, 2 lead + 2 sweep | TBD | TBD | TBD | TBD | TBD |
+| 2 | Sat Oct 3 | 8:00 AM – 1:00 PM | 5 hrs | 150 | $75 | TBD | TBD | TBD | TBD | TBD | TBD |
+| 3 | Sat Oct 3 | 2:00 PM – 5:00 PM | 3 hrs | 150 | $75 | TBD | TBD | TBD | TBD | TBD | TBD |
 
 ## Sweep & safety
 

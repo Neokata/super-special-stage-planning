@@ -129,7 +129,7 @@
     font-size: 12px;
     letter-spacing: 0.4px;
   }
-  td input.cell, td input.qty {
+  td input.cell {
     width: 100%;
     border: 1px solid transparent;
     background: transparent;
@@ -140,12 +140,11 @@
     border-radius: 3px;
     color: var(--ink);
   }
-  td input.cell:focus, td input.qty:focus {
+  td input.cell:focus {
     outline: none;
     border-color: var(--accent);
     background: #fff;
   }
-  td input.qty { max-width: 90px; }
   td input.cell.zero:not(:focus) { color: var(--muted); }
   td input.cell { max-width: 130px; }
 
@@ -207,14 +206,14 @@
   .scenario-tag[data-s="e"] { background: #cfdcec; color: var(--scenario-e); }
   .scenario-tag[data-s="b"] { background: #eccfec; color: var(--scenario-b); }
 
-  .fill-bar {
+  .fill-grid {
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: 6px;
     padding: 16px 20px;
     margin-bottom: 16px;
   }
-  .fill-bar h2 {
+  .fill-grid h2 {
     margin: 0 0 10px;
     font-size: 14px;
     text-transform: uppercase;
@@ -222,29 +221,53 @@
     color: var(--muted);
     font-weight: 600;
   }
-  .fill-bar .row {
-    display: flex;
+  .fill-grid .row {
+    display: grid;
+    grid-template-columns: 1.2fr 0.7fr 0.7fr 1.5fr 0.7fr;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
   }
-  .fill-bar input[type="range"] {
-    flex: 1;
+  .fill-grid .row:last-of-type { border-bottom: none; }
+  .fill-grid .row .slot-name {
+    font-weight: 600;
+  }
+  .fill-grid .row .slot-cap {
+    color: var(--muted);
+    font-size: 12px;
+    text-align: right;
+  }
+  .fill-grid input[type="range"] {
+    width: 100%;
     accent-color: var(--accent);
   }
-  .fill-bar .pct {
-    font-size: 28px;
+  .fill-grid .pct {
+    font-size: 18px;
     font-weight: 700;
     color: var(--accent);
-    min-width: 90px;
+    min-width: 56px;
     text-align: right;
     font-variant-numeric: tabular-nums;
   }
-  .fill-bar .hint {
-    color: var(--muted);
-    font-size: 12px;
-    margin-top: 6px;
+  .fill-grid .rev {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    color: var(--ink);
   }
-  .fill-bar .hint b { color: var(--ink); }
+  .fill-grid .header-row {
+    display: grid;
+    grid-template-columns: 1.2fr 0.7fr 0.7fr 1.5fr 0.7fr;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .fill-grid .header-row .num { text-align: right; }
 
   details { margin-top: 8px; }
   details summary {
@@ -255,39 +278,10 @@
   }
   details[open] summary { color: var(--ink); }
 
-  .bundle-mix {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: 8px;
-  }
-  .bundle-mix label {
-    font-size: 12px;
-    color: var(--muted);
-  }
-  .bundle-mix input {
-    width: 100%;
-    border: 1px solid var(--line);
-    border-radius: 3px;
-    padding: 4px 6px;
-    font: inherit;
-    font-variant-numeric: tabular-nums;
-    text-align: right;
-    margin-top: 2px;
-  }
-  .bundle-mix .total {
-    grid-column: 1 / -1;
-    text-align: right;
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 4px;
-  }
-  .bundle-mix .total.bad { color: var(--bad); }
-
   @media print {
     header { background: #fff; color: var(--ink); border-bottom: 2px solid var(--ink); }
     .scenarios, .help, .reset { display: none; }
-    .fill-bar input[type="range"] { display: none; }
+    .fill-grid input[type="range"] { display: none; }
     section.panel { break-inside: avoid; }
     body { background: #fff; }
   }
@@ -295,7 +289,7 @@
   @media (max-width: 720px) {
     main { padding: 12px; }
     .summary { grid-template-columns: repeat(2, 1fr); }
-    .bundle-mix { grid-template-columns: 1fr; }
+    .fill-grid .row, .fill-grid .header-row { grid-template-columns: 1fr 0.7fr 0.7fr 1.2fr 0.7fr; font-size: 12px; }
     header { padding: 14px 16px; }
   }
 </style>
@@ -309,10 +303,11 @@
 
 <main>
   <div class="help">
-    This P&amp;L shows <b>max potential income</b> at full sellout, plus a
-    fill % slider so you can model partial capacity. The default fill
-    is 100% (sellout). Costs are entered as dollar amounts. Totals
-    recalc instantly. Print or save-as-PDF to share.
+    This P&amp;L shows <b>max potential income at 100% sellout</b>,
+    with per-slot fill sliders so you can model partial capacity. Default
+    is 100% on all slots (full sellout). No discounts — each slot is a
+    single price. Costs are entered as dollar amounts. Totals recalc
+    instantly. Print or save-as-PDF to share.
   </div>
 
   <div class="scenarios" id="scenarios">
@@ -324,32 +319,50 @@
     <button class="reset" id="resetBtn" title="Clear this scenario back to defaults">Reset this scenario</button>
   </div>
 
-  <div class="fill-bar">
-    <h2>Capacity fill</h2>
+  <div class="fill-grid">
+    <h2>Per-slot capacity fill</h2>
+    <div class="header-row">
+      <div>Slot</div>
+      <div class="num">Cap</div>
+      <div class="num">Price</div>
+      <div>Fill slider</div>
+      <div class="num">Revenue</div>
+    </div>
     <div class="row">
-      <input type="range" id="fillSlider" min="0" max="100" step="5" value="100" />
-      <div class="pct" id="fillPct">100%</div>
+      <div class="slot-name">Route 1 · Fri AM (long, 6 hrs)</div>
+      <div class="num slot-cap">60 cars</div>
+      <div class="num slot-cap">$150</div>
+      <input type="range" id="fillFri" min="0" max="100" step="5" value="100" />
+      <div class="rev"><span id="fillFriPct">100%</span> · <b data-out="rev.fri.sub">$9,000</b></div>
     </div>
-    <div class="hint">
-      <b>Route capacity:</b> 150 cars/route × 3 routes = 450 driver-ticket slots.
-      At <b id="fillHint">100%</b> fill, that's <b id="carsHint">450</b> cars across the weekend.
-      <span id="priceHint"></span>
+    <div class="row">
+      <div class="slot-name">Route 2 · Sat AM (short, 5 hrs)</div>
+      <div class="num slot-cap">150 cars</div>
+      <div class="num slot-cap">$75</div>
+      <input type="range" id="fillSatAm" min="0" max="100" step="5" value="100" />
+      <div class="rev"><span id="fillSatAmPct">100%</span> · <b data-out="rev.satam.sub">$11,250</b></div>
     </div>
-    <details>
-      <summary>Adjust bundle mix (% of drivers taking 1, 2, or 3 routes)</summary>
-      <div class="bundle-mix">
-        <label>1-route only
-          <input type="number" id="mix1" value="30" min="0" max="100" step="5" />
-        </label>
-        <label>2-route bundle
-          <input type="number" id="mix2" value="45" min="0" max="100" step="5" />
-        </label>
-        <label>3-route all-in
-          <input type="number" id="mix3" value="25" min="0" max="100" step="5" />
-        </label>
-        <div class="total" id="mixTotal">Total: 100%</div>
-      </div>
-    </details>
+    <div class="row">
+      <div class="slot-name">Route 3 · Sat PM (short, 3 hrs)</div>
+      <div class="num slot-cap">150 cars</div>
+      <div class="num slot-cap">$75</div>
+      <input type="range" id="fillSatPm" min="0" max="100" step="5" value="100" />
+      <div class="rev"><span id="fillSatPmPct">100%</span> · <b data-out="rev.satpm.sub">$11,250</b></div>
+    </div>
+    <div class="row" style="border-top: 2px solid var(--ink); padding-top: 12px; margin-top: 4px;">
+      <div class="slot-name">Route tickets subtotal (at current fill)</div>
+      <div class="num slot-cap">360 cars</div>
+      <div class="num slot-cap">—</div>
+      <div></div>
+      <div class="rev"><b data-out="rev.routes.cur">$31,500</b></div>
+    </div>
+    <div class="row" style="font-size: 12px; color: var(--muted);">
+      <div>Max potential (100% all slots)</div>
+      <div class="num">360 cars</div>
+      <div class="num">—</div>
+      <div></div>
+      <div class="rev"><b data-out="rev.routes.max">$31,500</b></div>
+    </div>
   </div>
 
   <div class="summary">
@@ -379,47 +392,42 @@
   <section class="panel">
     <h2>Revenue</h2>
 
-    <table id="revTable">
+    <table>
       <thead>
-        <tr class="group"><td colspan="5">Driver tickets (max potential at 100% fill)</td></tr>
+        <tr class="group"><td colspan="4">Driver tickets (per slot, no discounts)</td></tr>
         <tr>
-          <th>Tier</th>
-          <th class="num">Bundle price</th>
-          <th class="num">Max cars</th>
-          <th class="num">Routes / driver</th>
-          <th class="num">Subtotal at 100%</th>
+          <th>Slot</th>
+          <th class="num">Price</th>
+          <th class="num">Cars sold (at current fill)</th>
+          <th class="num">Subtotal</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Route 1 only ($75)</td>
+          <td>Route 1 — Fri AM (long)</td>
+          <td class="num">$150</td>
+          <td class="num" data-out="rev.fri.cars">60</td>
+          <td class="num" data-out="rev.fri.sub2">$9,000</td>
+        </tr>
+        <tr>
+          <td>Route 2 — Sat AM (short)</td>
           <td class="num">$75</td>
-          <td class="num" data-out="rev.r1.maxcars">135</td>
-          <td class="num">1</td>
-          <td class="num" data-out="rev.r1.maxsub">$10,125</td>
+          <td class="num" data-out="rev.satam.cars">150</td>
+          <td class="num" data-out="rev.satam.sub2">$11,250</td>
         </tr>
         <tr>
-          <td>Routes 1 + 2 ($135)</td>
-          <td class="num">$135</td>
-          <td class="num" data-out="rev.r2.maxcars">202</td>
-          <td class="num">2</td>
-          <td class="num" data-out="rev.r2.maxsub">$27,270</td>
-        </tr>
-        <tr>
-          <td>Routes 1 + 2 + 3 ($185)</td>
-          <td class="num">$185</td>
-          <td class="num" data-out="rev.r3.maxcars">112</td>
-          <td class="num">3</td>
-          <td class="num" data-out="rev.r3.maxsub">$20,720</td>
+          <td>Route 3 — Sat PM (short)</td>
+          <td class="num">$75</td>
+          <td class="num" data-out="rev.satpm.cars">150</td>
+          <td class="num" data-out="rev.satpm.sub2">$11,250</td>
         </tr>
         <tr class="subtotal">
-          <td colspan="4">Route ticket subtotal (at 100% fill)</td>
-          <td class="num" data-out="rev.routes.max"></td>
+          <td colspan="3">Route ticket subtotal (at current fill)</td>
+          <td class="num" data-out="rev.routes.cur2">$31,500</td>
         </tr>
         <tr>
-          <td colspan="5" style="font-size:12px; color:var(--muted); padding-top:4px">
-            At <b id="revFillLabel">100%</b> fill, with current bundle mix:
-            route revenue = <b data-out="rev.routes.cur">$0</b>
+          <td colspan="4" style="font-size:12px; color:var(--muted); padding-top:4px">
+            Max potential (100% all slots): <b data-out="rev.routes.max2">$31,500</b>
           </td>
         </tr>
       </tbody>
@@ -431,7 +439,7 @@
         <tr>
           <th>Lot</th>
           <th class="num">Price</th>
-          <th class="num">Capacity (cars)</th>
+          <th class="num">Capacity</th>
           <th class="num">Max revenue</th>
         </tr>
       </thead>
@@ -449,7 +457,7 @@
           <td class="num">$1,200</td>
         </tr>
         <tr class="subtotal">
-          <td colspan="3">Kickoff parking subtotal (max potential)</td>
+          <td colspan="3">Kickoff parking subtotal (max)</td>
           <td class="num" data-out="rev.park.max">$2,200</td>
         </tr>
       </tbody>
@@ -495,7 +503,7 @@
         </tr>
         <tr>
           <td colspan="3" style="font-size:12px; color:var(--muted)">
-            Max potential (100% fill): <b data-out="rev.maxpotential">$0</b>
+            Max potential (100% all slots): <b data-out="rev.maxpotential">$0</b>
           </td>
         </tr>
       </tbody>
@@ -539,13 +547,14 @@
       <tbody>
         <tr><td>Insurance — GL</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.gl" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.gl.out"></td></tr>
         <tr><td>Insurance — venue rider</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.venue" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.venue.out"></td></tr>
-        <tr><td>Insurance — auto (lead/sweep)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.auto" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.auto.out"></td></tr>
+        <tr><td>Insurance — auto (lead/sweep × 2 Fri + N Sat)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.auto" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.auto.out"></td></tr>
         <tr><td>Permits (city + road closure)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.permits" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.permits.out"></td></tr>
         <tr><td>Radios / comms rental</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.radios" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.radios.out"></td></tr>
         <tr><td>Medical / first aid</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.medical" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.medical.out"></td></tr>
         <tr><td>Photography / content</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.photo" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.photo.out"></td></tr>
         <tr><td>Staff meals (Fri + Sat)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.meals" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.meals.out"></td></tr>
         <tr><td>Fuel for lead/sweep vehicles</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.fuel" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.fuel.out"></td></tr>
+        <tr><td>Lead + sweep driver pay (Fri 2+2; Sat TBD)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.driverpay" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.driverpay.out"></td></tr>
         <tr class="subtotal"><td colspan="2">Ops subtotal</td><td class="num" data-out="cost.ops.total"></td></tr>
       </tbody>
     </table>
@@ -625,8 +634,8 @@
           <td class="num" style="color:var(--muted); font-size:12px" data-out="net.max"></td>
         </tr>
         <tr>
-          <td style="color:var(--muted); font-size:12px">Break-even fill (revenue = cost)</td>
-          <td class="num" style="color:var(--muted); font-size:12px" data-out="breakeven"></td>
+          <td style="color:var(--muted); font-size:12px">Cars sold at current fill</td>
+          <td class="num" style="color:var(--muted); font-size:12px" data-out="cars.total">360</td>
         </tr>
       </tbody>
     </table>
@@ -637,25 +646,29 @@
     <summary>Notes / assumptions</summary>
     <div style="padding:10px 4px; font-size:13px; color:var(--ink)">
       <ul style="margin:6px 0; padding-left:20px; line-height:1.7">
-        <li><b>Max potential income</b> = 450 driver-tickets sold at the
-          current bundle mix + $2,200 kickoff parking + other revenue.
-          That's the ceiling if every route is sold out.</li>
-        <li><b>Fill %</b> scales route revenue linearly. Parking is
-          always shown at max ($2,200) since the lots are fixed cap.
-          Move the slider to model partial sellout.</li>
-        <li><b>Bundle mix</b> defaults to 30% / 45% / 25% (1/2/3-route).
-          Adjust in the "Adjust bundle mix" panel. Note: must sum to
-          100% — a warning shows if not.</li>
-        <li><b>Per-tier max cars at 100% fill</b> = 30% / 45% / 25% of
-          450 = 135 / 202 / 112. Revenue per tier:
-          $10,125 / $27,270 / $20,720. Total route max: <b>$58,115</b>.</li>
+        <li><b>Max potential income</b> at 100% sellout:
+          <ul style="margin:4px 0 4px 20px; padding:0; list-style:disc">
+            <li>Route 1 (Fri AM, 60 cars × $150) = $9,000</li>
+            <li>Route 2 (Sat AM, 150 cars × $75) = $11,250</li>
+            <li>Route 3 (Sat PM, 150 cars × $75) = $11,250</li>
+            <li>Route subtotal: <b>$31,500</b></li>
+            <li>Plus $2,200 max kickoff parking + other revenue</li>
+          </ul>
+        </li>
+        <li><b>No discounts.</b> Each slot is one price. A driver taking all
+          3 slots pays $300 ($150 + $75 + $75). Replaces the older
+          3-tier $75/$60/$50 model.</li>
+        <li><b>Per-slot fill sliders</b> scale revenue independently. So
+          if Friday is sold out at 60 but Saturday is at 50%, each slider
+          reflects that.</li>
+        <li><b>Friday pack model</b>: 2 packs of 30, 2 lead + 2 sweep
+          drivers. Saturday pack size TBD — affects lead/sweep driver
+          pay and fuel cost. Edit the "Lead + sweep driver pay" cell
+          in Ops to model it.</li>
         <li><b>Scenarios</b> (Conservative / Expected / Best Case) only
-          affect <i>cost</i> defaults — the fill % slider is the single
+          affect <i>cost</i> defaults — the fill sliders are the single
           source of truth for revenue modeling. Switch scenarios when
-          you have different cost assumptions (e.g. cheaper venue in
-          Conservative, full vendor spend in Best Case).</li>
-        <li><b>Break-even fill</b> = total cost ÷ max potential route
-          revenue. Above this fill, the event is net positive.</li>
+          you have different cost assumptions.</li>
         <li><b>Numbers persist</b> via <code>localStorage</code> on this
           browser only. Clearing site data wipes them — copy out to a
           sheet if you need a real backup.</li>
@@ -667,18 +680,19 @@
 <script>
   "use strict";
 
-  // -------- constants --------
-  const ROUTE_CAP_PER_ROUTE = 150;
-  const ROUTE_COUNT = 3;
-  const MAX_CARS = ROUTE_CAP_PER_ROUTE * ROUTE_COUNT; // 450
-  const BUNDLE_PRICES = { r1: 75, r2: 135, r3: 185 };
+  // -------- slot definitions --------
+  const SLOTS = {
+    fri:   { cap: 60,  price: 150, name: "Route 1 (Fri AM)" },
+    satam: { cap: 150, price: 75,  name: "Route 2 (Sat AM)" },
+    satpm: { cap: 150, price: 75,  name: "Route 3 (Sat PM)" },
+  };
+  const TOTAL_CAP = SLOTS.fri.cap + SLOTS.satam.cap + SLOTS.satpm.cap; // 360
+
   const PARKING_IN_PRICE = 50, PARKING_IN_CAP = 20;
   const PARKING_RS_PRICE = 30, PARKING_RS_CAP = 40;
   const PARKING_MAX = PARKING_IN_PRICE * PARKING_IN_CAP + PARKING_RS_PRICE * PARKING_RS_CAP; // $2,200
 
   // -------- per-scenario cost defaults --------
-  // Per scenario: how much we expect to spend on each cost bucket.
-  // Conservative = lean (skip optional, cut scope). Expected = planned. Best = full send.
   const SCENARIOS = {
     c: {
       name: "Conservative",
@@ -686,41 +700,42 @@
         // vendors — cut optional / DIY
         "cost.vendor.dj": 400,
         "cost.vendor.bboys": 300,
-        "cost.vendor.sound": 0,            // skip pro sound, use a portable
-        "cost.vendor.sec": 0,              // rely on staff only
+        "cost.vendor.sound": 0,
+        "cost.vendor.sec": 0,
         "cost.vendor.potties": 200,
         // venue & city — minimum required
         "cost.venue.park": 500,
-        "cost.venue.lot": 0,               // negotiate free
+        "cost.venue.lot": 0,
         "cost.venue.city": 0,
-        "cost.venue.police": 0,            // skip off-duty police
+        "cost.venue.police": 0,
         // ops — minimum insurance
         "cost.ops.gl": 800,
         "cost.ops.venue": 200,
         "cost.ops.auto": 400,
         "cost.ops.permits": 250,
-        "cost.ops.radios": 0,              // personal phones
+        "cost.ops.radios": 0,
         "cost.ops.medical": 0,
         "cost.ops.photo": 0,
         "cost.ops.meals": 300,
         "cost.ops.fuel": 100,
+        "cost.ops.driverpay": 1200, // Fri 4 × $300
         // branded — bare minimum
         "cost.brand.tshirts": 600,
         "cost.brand.stickers": 100,
         "cost.brand.banners": 300,
         "cost.brand.signage": 200,
         // tick tracking
-        "cost.tick.shopify": 0,            // 0% (Shopify is %-based, model separately if needed)
+        "cost.tick.shopify": 0,
         "cost.tick.square": 0,
         "cost.tick.print": 50,
         // raffle
-        "cost.raf.prizes": 0,              // all in-kind
+        "cost.raf.prizes": 0,
         "cost.raf.infra": 50,
         // marketing
         "cost.mkt.print": 100,
         "cost.mkt.digital": 0,
         // dinner
-        "cost.dinner": 0,                  // skip / potluck
+        "cost.dinner": 0,
       },
       other: {
         "rev.other.raffle": 200,
@@ -749,6 +764,7 @@
         "cost.ops.photo": 300,
         "cost.ops.meals": 600,
         "cost.ops.fuel": 250,
+        "cost.ops.driverpay": 2400, // 4 Fri + 4 Sat (estimate, depends on Sat pack size)
         "cost.brand.tshirts": 1000,
         "cost.brand.stickers": 200,
         "cost.brand.banners": 600,
@@ -789,6 +805,7 @@
         "cost.ops.photo": 800,
         "cost.ops.meals": 1000,
         "cost.ops.fuel": 400,
+        "cost.ops.driverpay": 3600, // 4 Fri + 8 Sat (larger Sat staffing)
         "cost.brand.tshirts": 1500,
         "cost.brand.stickers": 300,
         "cost.brand.banners": 1200,
@@ -811,7 +828,7 @@
   };
 
   // -------- storage --------
-  const LS_KEY = "sss_apnl_v2";
+  const LS_KEY = "sss_apnl_v3";
 
   function loadAll() {
     try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }
@@ -847,7 +864,7 @@
   }
   function out(key, val) {
     const el = document.querySelector(`[data-out="${key}"]`);
-    if (el) el.textContent = fmt(val);
+    if (el) el.textContent = val;
   }
   function readNum(key) {
     const el = document.querySelector(`[data-k="${key}"]`);
@@ -863,47 +880,54 @@
   // -------- core compute --------
   let activeScen = "c";
 
-  function getFillPct() {
-    return parseFloat($("#fillSlider").value) / 100;
-  }
-  function getMixPcts() {
-    return {
-      m1: parseFloat($("#mix1").value) || 0,
-      m2: parseFloat($("#mix2").value) || 0,
-      m3: parseFloat($("#mix3").value) || 0,
-    };
+  function getFillPct(slot) {
+    const el = $("#fill" + slot);
+    return el ? parseFloat(el.value) / 100 : 0;
   }
 
   function compute() {
-    const fill = getFillPct();
-    const mix = getMixPcts();
-    const mixTotal = mix.m1 + mix.m2 + mix.m3;
+    const fillFri = getFillPct("Fri");
+    const fillSatAm = getFillPct("SatAm");
+    const fillSatPm = getFillPct("SatPm");
 
-    // Update max-cars column on the route revenue table (at 100% fill)
-    const r1max = Math.round(MAX_CARS * (mixTotal > 0 ? mix.m1 / mixTotal : 0));
-    const r2max = Math.round(MAX_CARS * (mixTotal > 0 ? mix.m2 / mixTotal : 0));
-    const r3max = MAX_CARS - r1max - r2max; // absorb rounding
-    out("rev.r1.maxcars", r1max);
-    out("rev.r2.maxcars", r2max);
-    out("rev.r3.maxcars", r3max);
-    out("rev.r1.maxsub", r1max * BUNDLE_PRICES.r1);
-    out("rev.r2.maxsub", r2max * BUNDLE_PRICES.r2);
-    out("rev.r3.maxsub", r3max * BUNDLE_PRICES.r3);
-    const routesMax = r1max * BUNDLE_PRICES.r1 + r2max * BUNDLE_PRICES.r2 + r3max * BUNDLE_PRICES.r3;
-    out("rev.routes.max", routesMax);
+    const carsFri = Math.round(SLOTS.fri.cap * fillFri);
+    const carsSatAm = Math.round(SLOTS.satam.cap * fillSatAm);
+    const carsSatPm = Math.round(SLOTS.satpm.cap * fillSatPm);
+    const carsTotal = carsFri + carsSatAm + carsSatPm;
 
-    // At current fill
-    const cars = MAX_CARS * fill;
-    const r1cur = r1max * fill;
-    const r2cur = r2max * fill;
-    const r3cur = r3max * fill;
-    const routesCur = r1cur * BUNDLE_PRICES.r1 + r2cur * BUNDLE_PRICES.r2 + r3cur * BUNDLE_PRICES.r3;
+    const revFri = carsFri * SLOTS.fri.price;
+    const revSatAm = carsSatAm * SLOTS.satam.price;
+    const revSatPm = carsSatPm * SLOTS.satpm.price;
+    const routesCur = revFri + revSatAm + revSatPm;
+
+    const maxFri = SLOTS.fri.cap * SLOTS.fri.price;
+    const maxSatAm = SLOTS.satam.cap * SLOTS.satam.price;
+    const maxSatPm = SLOTS.satpm.cap * SLOTS.satpm.price;
+    const routesMax = maxFri + maxSatAm + maxSatPm;
+
+    // Update fill grid
+    out("rev.fri.sub", revFri);
+    out("rev.satam.sub", revSatAm);
+    out("rev.satpm.sub", revSatPm);
     out("rev.routes.cur", routesCur);
-    $("#revFillLabel").textContent = `${Math.round(fill * 100)}%`;
+    out("rev.routes.max", routesMax);
+    $("#fillFriPct").textContent = `${Math.round(fillFri * 100)}%`;
+    $("#fillSatAmPct").textContent = `${Math.round(fillSatAm * 100)}%`;
+    $("#fillSatPmPct").textContent = `${Math.round(fillSatPm * 100)}%`;
+
+    // Update revenue table
+    out("rev.fri.cars", carsFri);
+    out("rev.satam.cars", carsSatAm);
+    out("rev.satpm.cars", carsSatPm);
+    out("rev.fri.sub2", revFri);
+    out("rev.satam.sub2", revSatAm);
+    out("rev.satpm.sub2", revSatPm);
+    out("rev.routes.cur2", routesCur);
+    out("rev.routes.max2", routesMax);
 
     // Parking (always max)
     out("rev.park.max", PARKING_MAX);
-    const parkCur = PARKING_MAX; // parking is fixed-cap, shown at max
+    const parkCur = PARKING_MAX;
 
     // Other revenue
     const ra = readNum("rev.other.raffle");
@@ -925,7 +949,7 @@
     const costGroups = [
       ["vendor", ["dj","bboys","sound","sec","potties"]],
       ["venue",  ["park","lot","city","police"]],
-      ["ops",    ["gl","venue","auto","permits","radios","medical","photo","meals","fuel"]],
+      ["ops",    ["gl","venue","auto","permits","radios","medical","photo","meals","fuel","driverpay"]],
       ["brand",  ["tshirts","stickers","banners","signage"]],
       ["tick",   ["shopify","square","print"]],
       ["raf",    ["prizes","infra"]],
@@ -956,32 +980,18 @@
     const net = revCur - costTotal;
     out("net", net);
     out("net.max", revMax - costTotal);
-
-    // Break-even fill
-    const routeRevenuePerPct = routesMax / 100; // 1% fill = this many dollars in route rev
-    const fixedRev = PARKING_MAX + otherTotal;
-    // Find fill p where: routesMax * (p/100) + fixedRev = costTotal
-    // p = (costTotal - fixedRev) / routesMax * 100
-    let breakeven = "—";
-    if (routesMax > 0) {
-      const pct = ((costTotal - fixedRev) / routesMax) * 100;
-      if (pct <= 0) breakeven = "0% (already profitable at any fill)";
-      else if (pct > 100) breakeven = `>100% (cannot break even — costs > max revenue)`;
-      else breakeven = `${pct.toFixed(1)}%`;
-    }
-    out("breakeven", breakeven);
+    out("cars.total", `${carsTotal} / ${TOTAL_CAP}`);
 
     // Summary cards
-    const carsNow = Math.round(cars);
     $("#sumRev").textContent = fmt(revCur);
-    $("#sumRevSub").textContent = `${carsNow} cars · max potential ${fmt(revMax)}`;
+    $("#sumRevSub").textContent = `${carsTotal} of ${TOTAL_CAP} cars · max ${fmt(revMax)}`;
     $("#sumCost").textContent = fmt(costTotal);
     $("#sumCostSub").textContent = `${costLines} line items with values`;
     $("#sumNet").textContent = fmt(net);
     $("#sumNetSub").textContent = net >= 0 ? "Net positive at current fill" : "Net negative at current fill";
     const margin = revCur > 0 ? (net / revCur) * 100 : 0;
     $("#sumMargin").textContent = `${margin.toFixed(1)}%`;
-    $("#sumMarginSub").textContent = `Net / Revenue (at ${Math.round(fill * 100)}% fill)`;
+    $("#sumMarginSub").textContent = `Net / Revenue (current fill)`;
 
     // Net note
     let note = "";
@@ -990,40 +1000,23 @@
     } else if (costTotal === 0) {
       note = "All costs are $0 — fill in vendor quotes and ops costs to see realistic margins.";
     } else if (net < 0) {
-      note = `At ${Math.round(fill * 100)}% fill, projecting ${fmt(Math.abs(net))} in the red. Increase fill or trim cost.`;
+      note = `At current fill, projecting ${fmt(Math.abs(net))} in the red. Increase fill or trim cost.`;
     } else if (margin < 15) {
       note = `Margins are thin (${margin.toFixed(1)}%). Aim for at least 20% to absorb weather / incident risk.`;
     } else {
-      note = `Healthy margin (${margin.toFixed(1)}%) at ${Math.round(fill * 100)}% fill. Reserve 10–15% for weather / refund / contingency.`;
+      note = `Healthy margin (${margin.toFixed(1)}%) at current fill. Reserve 10–15% for weather / refund / contingency.`;
     }
     $("#netNote").textContent = note;
 
-    // Mix total warning
-    const mixTotalEl = $("#mixTotal");
-    if (mixTotal === 100) {
-      mixTotalEl.classList.remove("bad");
-      mixTotalEl.textContent = `Total: ${mixTotal}%`;
-    } else {
-      mixTotalEl.classList.add("bad");
-      mixTotalEl.textContent = `Total: ${mixTotal}% (should be 100%)`;
-    }
-
-    // Fill hint
-    $("#fillPct").textContent = `${Math.round(fill * 100)}%`;
-    $("#fillHint").textContent = `${Math.round(fill * 100)}%`;
-    $("#carsHint").textContent = carsNow;
-
-    // Persist
     persistState();
   }
 
   function persistState() {
     const state = {};
     $$('input[data-k]').forEach(e => { state[e.dataset.k] = parseFloat(e.value) || 0; });
-    state._fill = parseFloat($("#fillSlider").value);
-    state._mix1 = parseFloat($("#mix1").value);
-    state._mix2 = parseFloat($("#mix2").value);
-    state._mix3 = parseFloat($("#mix3").value);
+    state._fillFri = parseFloat($("#fillFri").value);
+    state._fillSatAm = parseFloat($("#fillSatAm").value);
+    state._fillSatPm = parseFloat($("#fillSatPm").value);
     state._activeScen = activeScen;
     saveScen(activeScen, state);
   }
@@ -1034,29 +1027,23 @@
     const defCosts = SCENARIOS[scen].costs;
     const defOther = SCENARIOS[scen].other;
 
-    // Fill in cost defaults from scenario
     for (const [k, v] of Object.entries(defCosts)) writeNum(k, v);
     for (const [k, v] of Object.entries(defOther)) writeNum(k, v);
 
-    // Override with saved values if present
     if (saved) {
       for (const [k, v] of Object.entries(saved)) {
-        if (k === "_fill") $("#fillSlider").value = v;
-        else if (k === "_mix1") $("#mix1").value = v;
-        else if (k === "_mix2") $("#mix2").value = v;
-        else if (k === "_mix3") $("#mix3").value = v;
-        else if (k === "_activeScen") {} // ignore
+        if (k === "_fillFri") $("#fillFri").value = v;
+        else if (k === "_fillSatAm") $("#fillSatAm").value = v;
+        else if (k === "_fillSatPm") $("#fillSatPm").value = v;
+        else if (k === "_activeScen") {}
         else writeNum(k, v);
       }
     } else {
-      // First time in this scenario — reset slider to 100%
-      $("#fillSlider").value = 100;
-      $("#mix1").value = 30;
-      $("#mix2").value = 45;
-      $("#mix3").value = 25;
+      $("#fillFri").value = 100;
+      $("#fillSatAm").value = 100;
+      $("#fillSatPm").value = 100;
     }
 
-    // Update scenario tag
     const tag = $("#scenTag");
     tag.dataset.s = scen;
     tag.textContent = SCENARIOS[scen].name;
@@ -1066,15 +1053,12 @@
   }
 
   function attach() {
-    // Live recompute on any input
-    $$('input[data-k], #fillSlider, #mix1, #mix2, #mix3').forEach(el => {
+    $$('input[data-k], #fillFri, #fillSatAm, #fillSatPm').forEach(el => {
       el.addEventListener("input", compute);
     });
-    // Scenario tabs
     $$('.scenarios button[data-s]').forEach(b => {
       b.addEventListener("click", () => populate(b.dataset.s));
     });
-    // Reset
     $("#resetBtn").addEventListener("click", () => {
       if (confirm(`Reset "${SCENARIOS[activeScen].name}" scenario to defaults? This wipes your edits for this scenario only.`)) {
         resetScen(activeScen);
@@ -1083,7 +1067,6 @@
   }
 
   attach();
-  // Determine initial scenario from localStorage or default to "c"
   const all = loadAll();
   let initial = "c";
   for (const k of Object.keys(all)) {

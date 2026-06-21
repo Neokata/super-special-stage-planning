@@ -1,14 +1,21 @@
 # 02 — Pricing tiers
 
-## Driver tickets (per route, stepped discount)
+## Driver tickets (per slot, no discounts)
 
-| Route # | Price | Cumulative (if bought together) |
-|---|---|---|
-| Route 1 | $75 | $75 |
-| Route 2 | $60 | $135 |
-| Route 3 | $50 | $185 |
-| Route 4 | $50 | $235 |
-| Route 5+ | $50 each | +$50 each |
+| Slot | Day | Time (CT) | Duration | Cap | Price | Notes |
+|---|---|---|---|---|---|---|
+| Route 1 (long) | Fri Oct 2 | 10:00 AM – 4:00 PM | 6 hrs | 60 cars | **$150** | Premium slot: long route, small pack (2×30) |
+| Route 2 (short) | Sat Oct 3 | 8:00 AM – 1:00 PM | 5 hrs | 150 cars | **$75** | Morning pack |
+| Route 3 (short) | Sat Oct 3 | 2:00 PM – 5:00 PM | 3 hrs | 150 cars | **$75** | Afternoon pack |
+
+**No discounts.** Each slot is a single price. A driver taking all 3
+slots pays $150 + $75 + $75 = $300 for the full weekend.
+
+**Max potential route revenue at 100% sellout:**
+- Route 1: 60 × $150 = $9,000
+- Route 2: 150 × $75 = $11,250
+- Route 3: 150 × $75 = $11,250
+- **Total: $31,500**
 
 Sale channel: **Shopify** (per `TougeCon/AGENTS.md` — TCSS26 used
 Shopify, and the Supabase `tickets` table was dropped on 2026-06-11
@@ -26,6 +33,9 @@ Shopify checkout
 
 No new schema is required for SSS ticket sales. The Shopify integration
 and `route_assignments` table already exist from TCSS26.
+
+Shopify product structure: 3 separate SKUs, one per slot. Drivers can
+buy 1, 2, or all 3 SKUs in a single Shopify cart.
 
 ## Friday kickoff parking
 
@@ -50,3 +60,10 @@ and `route_assignments` table already exist from TCSS26.
   such.
 - Implication: raffle / merch sales at the kickoff are cash/Square
   only, no pre-sale inventory reconciliation needed.
+
+## Open
+
+- Refund policy for cancelled routes (weather, hazard, etc.).
+- Raffle / prize ticket sales: cash/Square at the gate (per the
+  spectator-policy decision above).
+- Saturday pack size TBD (5×30, 10×15, 6×25, 3×50, or other).
