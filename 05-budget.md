@@ -79,13 +79,19 @@ TBD — depends on driver count, route bundle mix, and sponsorship.
 
 ### Branded materials
 
-| Item | Est. cost | Notes |
-|---|---|---|
-| T-shirts (staff + driver + sponsor) | TBD | Quantities TBD |
-| Stickers | TBD | Cheapest swag; budget ~$1/each |
-| Windshield banners | TBD | Per-car, drivers only |
-| Signage (route, parking, kickoff venue) | TBD | Print + install |
-| **Branded materials subtotal** | **TBD** | |
+| Item | Quantity | Unit cost | At 100% fill | Notes |
+|---|---|---|---|---|
+| T-shirts (drivers) | scales with fill (max 360) | $10/shirt | **$3,600** | Custom printed, given to each participating driver. Quantity = actual driver count, not full capacity. |
+| Windshield banners (drivers) | scales with fill (max 360) | $10/banner | **$3,600** | Per-car, one per driver. Quantity = actual driver count. |
+| Stickers | TBD | ~$1/each | TBD | Cheapest swag; leftover from past events OK |
+| Signage (route, parking, kickoff venue) | TBD | — | TBD | Print + install |
+| Staff + sponsor shirts | small batch (~20–40) | $15/shirt | ~$300–$600 | Separate from driver shirts, higher quality |
+| **Branded materials subtotal** | | | **~$7,500+ at full fill** | Driver swag alone = $7,200 |
+
+**Driver swag is locked at $20/driver ($10 shirt + $10 banner).**
+At 360 drivers, that's $7,200 — a real cost line item, not a rounding
+error. This was set 2026-06-21 based on owner direction: "every
+participating driver gets a t-shirt and a windshield banner."
 
 ### Ticket tracking
 

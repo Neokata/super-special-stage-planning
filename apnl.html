@@ -560,16 +560,40 @@
     </table>
     </details>
 
-    <details><summary>Branded materials</summary>
+    <details open><summary>Branded materials</summary>
     <table>
       <tbody>
-        <tr><td>T-shirts (staff + driver + sponsor)</td><td class="num"><input type="number" class="cell zero" data-k="cost.brand.tshirts" value="0" min="0" step="1" /></td><td class="num" data-out="cost.brand.tshirts.out"></td></tr>
+        <tr>
+          <td>T-shirts (drivers, custom printed)</td>
+          <td class="num">
+            <input type="number" class="qty" data-k="cost.brand.tshirts.qty" value="360" min="0" step="1" title="Quantity" />
+            <span style="color:var(--muted); font-size:11px">qty</span>
+            ×
+            $<input type="number" class="qty" data-k="cost.brand.tshirts.unit" value="10" min="0" step="1" title="Per-shirt cost" />
+            <span style="color:var(--muted); font-size:11px">/shirt</span>
+          </td>
+          <td class="num" data-out="cost.brand.tshirts.out"></td>
+        </tr>
+        <tr>
+          <td>Windshield banners (drivers)</td>
+          <td class="num">
+            <input type="number" class="qty" data-k="cost.brand.banners.qty" value="360" min="0" step="1" title="Quantity" />
+            <span style="color:var(--muted); font-size:11px">qty</span>
+            ×
+            $<input type="number" class="qty" data-k="cost.brand.banners.unit" value="10" min="0" step="1" title="Per-banner cost" />
+            <span style="color:var(--muted); font-size:11px">/banner</span>
+          </td>
+          <td class="num" data-out="cost.brand.banners.out"></td>
+        </tr>
         <tr><td>Stickers</td><td class="num"><input type="number" class="cell zero" data-k="cost.brand.stickers" value="0" min="0" step="1" /></td><td class="num" data-out="cost.brand.stickers.out"></td></tr>
-        <tr><td>Windshield banners</td><td class="num"><input type="number" class="cell zero" data-k="cost.brand.banners" value="0" min="0" step="1" /></td><td class="num" data-out="cost.brand.banners.out"></td></tr>
         <tr><td>Signage (route, parking, kickoff)</td><td class="num"><input type="number" class="cell zero" data-k="cost.brand.signage" value="0" min="0" step="1" /></td><td class="num" data-out="cost.brand.signage.out"></td></tr>
+        <tr><td>Staff + sponsor shirts (separate from driver shirts)</td><td class="num"><input type="number" class="cell zero" data-k="cost.brand.staffshirts" value="0" min="0" step="1" /></td><td class="num" data-out="cost.brand.staffshirts.out"></td></tr>
         <tr class="subtotal"><td colspan="2">Branded materials subtotal</td><td class="num" data-out="cost.brand.total"></td></tr>
       </tbody>
     </table>
+    <div class="panel-note" style="margin-top:6px">
+      Driver swag default: 360 shirts × $10 + 360 banners × $10 = <b>$7,200</b> at full fill. Auto-scales if you change qty or unit cost.
+    </div>
     </details>
 
     <details><summary>Ticket tracking &amp; payment fees</summary>
@@ -725,11 +749,14 @@
         "cost.ops.meals": 300,
         "cost.ops.fuel": 100,
         "cost.ops.driverpay": 4200, // 14 staff × $300 (4 Fri + 10 Sat; Sat staff work both AM+PM)
-        // branded — bare minimum
-        "cost.brand.tshirts": 600,
+        // branded — driver swag scales with capacity; staff shirts per scenario
+        "cost.brand.tshirts.qty": 360,
+        "cost.brand.tshirts.unit": 10,
+        "cost.brand.banners.qty": 360,
+        "cost.brand.banners.unit": 10,
         "cost.brand.stickers": 100,
-        "cost.brand.banners": 300,
         "cost.brand.signage": 200,
+        "cost.brand.staffshirts": 200, // ~20 staff @ $10 each
         // tick tracking
         "cost.tick.shopify": 0,
         "cost.tick.square": 0,
@@ -771,10 +798,13 @@
         "cost.ops.meals": 600,
         "cost.ops.fuel": 250,
         "cost.ops.driverpay": 4200, // 14 staff × $300 (same driver, both Sat sessions)
-        "cost.brand.tshirts": 1000,
+        "cost.brand.tshirts.qty": 360,
+        "cost.brand.tshirts.unit": 10,
+        "cost.brand.banners.qty": 360,
+        "cost.brand.banners.unit": 10,
         "cost.brand.stickers": 200,
-        "cost.brand.banners": 600,
         "cost.brand.signage": 400,
+        "cost.brand.staffshirts": 400, // ~30 staff @ $13 each
         "cost.tick.shopify": 0,
         "cost.tick.square": 50,
         "cost.tick.print": 100,
@@ -812,10 +842,13 @@
         "cost.ops.meals": 1000,
         "cost.ops.fuel": 400,
         "cost.ops.driverpay": 4200, // Same as Expected: 14 staff × $300
-        "cost.brand.tshirts": 1500,
+        "cost.brand.tshirts.qty": 360,
+        "cost.brand.tshirts.unit": 10,
+        "cost.brand.banners.qty": 360,
+        "cost.brand.banners.unit": 10,
         "cost.brand.stickers": 300,
-        "cost.brand.banners": 1200,
         "cost.brand.signage": 800,
+        "cost.brand.staffshirts": 600, // ~40 staff @ $15 each (premium)
         "cost.tick.shopify": 0,
         "cost.tick.square": 100,
         "cost.tick.print": 200,
@@ -834,7 +867,7 @@
   };
 
   // -------- storage --------
-  const LS_KEY = "sss_apnl_v4";
+  const LS_KEY = "sss_apnl_v5";
 
   function loadAll() {
     try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }
@@ -951,18 +984,28 @@
     out("rev.total2", revCur);
     out("rev.maxpotential", revMax);
 
+    // Driver swag: qty × unit cost
+    const tshirtCost = readNum("cost.brand.tshirts.qty") * readNum("cost.brand.tshirts.unit");
+    const bannerCost = readNum("cost.brand.banners.qty") * readNum("cost.brand.banners.unit");
+    out("cost.brand.tshirts.out", tshirtCost);
+    out("cost.brand.banners.out", bannerCost);
+
     // Cost
     const costGroups = [
       ["vendor", ["dj","bboys","sound","sec","potties"]],
       ["venue",  ["park","lot","city","police"]],
       ["ops",    ["gl","venue","auto","permits","radios","medical","photo","meals","fuel","driverpay"]],
-      ["brand",  ["tshirts","stickers","banners","signage"]],
+      ["brand",  ["stickers","signage","staffshirts"]], // tshirts & banners handled above
       ["tick",   ["shopify","square","print"]],
       ["raf",    ["prizes","infra"]],
       ["mkt",    ["print","digital"]],
     ];
     let costTotal = 0;
     let costLines = 0;
+    // Add driver swag as line items
+    if (tshirtCost > 0) costLines++;
+    if (bannerCost > 0) costLines++;
+    costTotal += tshirtCost + bannerCost;
     for (const [group, keys] of costGroups) {
       let sub = 0;
       for (const k of keys) {

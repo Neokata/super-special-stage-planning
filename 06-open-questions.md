@@ -38,6 +38,10 @@ blocks other work).
   Same staff works both AM and PM for their route.
 - ✅ Total weekend staff drivers: 14 (4 Fri + 10 Sat). At $300/staff
   = $4,200 default in driver pay.
+- ✅ Driver swag (set 2026-06-21): every participating driver gets
+  one t-shirt and one windshield banner. $10/shirt + $10/banner =
+  $20/driver. At 360 drivers = **$7,200**. P&L now models this as
+  qty × unit cost.
 
 ## Pricing & tickets
 
