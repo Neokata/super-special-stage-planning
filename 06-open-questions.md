@@ -13,6 +13,20 @@ blocks other work).
    use "battle" language (per root `TougeCon/AGENTS.md` naming rule).
    Blocks marketing copy.
 
+## Resolved (since planning started)
+
+- ✅ Spectator policy: walk-ins free. See `02-pricing-tiers.md`.
+- ✅ Friday schedule: 10:00–16:00 long route; 18:00–21:00 kickoff.
+- ✅ Saturday schedule: 08:00–13:00 + 14:00–17:00 (1-hour break).
+- ✅ Route count: 1 long + 2 short = 3 routes (supports 3-tier pricing).
+- ✅ Admin entity for contracts / expenses: Neokata. Brand: TougeCon.
+- ✅ Route cap: 150 cars per route (set 2026-06-21).
+  - Total route-ticket ceiling: 450 driver-tickets.
+  - At 30/45/25 bundle mix, max route revenue = **$58,115**.
+  - + $2,200 parking + other = **max potential ~$60,515** (Conservative other).
+- ✅ Sellout modeling: `apnl.html` shows max potential at 100% fill
+  with a fill % slider to model partial sellout. Default fill is 100%.
+
 ## Pricing & tickets
 
 3. Shopify product structure: per-route SKUs vs. bundle SKU vs.

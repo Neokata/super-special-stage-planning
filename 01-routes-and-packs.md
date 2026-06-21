@@ -15,10 +15,16 @@
 
 ## Capacity (initial)
 
-- **Initial car count for the event:** 20.
-- That is the kickoff in-park cap, not necessarily the route cap.
-- Route cap per pack: TBD. Will be set by road conditions, sweep
-  vehicle, and lead driver availability.
+- **Route cap: 150 cars per route.** Set 2026-06-21.
+- A single driver-ticket = one car entry for one route.
+- The Friday long route and the two Saturday short routes each
+  cap independently at 150 cars. So **total route-ticket ceiling =
+  150 cars × 3 routes = 450 driver-route-tickets** (though most
+  drivers will buy the multi-route bundle, so total *tickets sold*
+  will be lower than 450).
+- Pack size per route is still TBD and will be set by road
+  conditions, sweep vehicle, and lead driver availability. Packs
+  run sequentially within a route.
 
 ## Route list
 
@@ -49,6 +55,14 @@ can be adapted.
 - Assignment lands in the `route_assignments` Supabase table (schema
   in `5-Infra-Reference/tougecon-supabase/migrations/20260611000001_route_assignments.sql`).
 - Driver sees their pack assignment in the drive app.
+
+## Sellout economics
+
+- 150 cars / route × 3 routes = 450 driver-route-tickets available
+  in total.
+- At the all-in $185 bundle, max route revenue = 150 × $185 = **$27,750**.
+- The `apnl.html` P&L models fill % with an assumed bundle mix of
+  ~30% / ~45% / ~25% (1-route / 2-route / 3-route).
 
 ## Sweep & safety
 
