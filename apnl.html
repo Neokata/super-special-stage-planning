@@ -82,17 +82,32 @@
     border-left: 6px solid var(--accent);
   }
   section.panel h2 {
-    margin: 0 0 10px;
-    font-size: 14px;
+    margin: 0 0 12px;
+    padding-bottom: 10px;
+    font-size: 20px;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 1.2px;
+    color: var(--ink);
+    font-weight: 700;
+    border-bottom: 2px solid var(--ink);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  section.panel.revenue h2 { color: #1d6b30; border-bottom-color: var(--good); }
+  section.panel.cost h2    { color: #a02020; border-bottom-color: var(--bad); }
+  section.panel.net h2     { color: var(--accent); border-bottom-color: var(--accent); }
+  section.panel h2 .sub {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    text-transform: none;
     color: var(--muted);
-    font-weight: 600;
   }
   section.panel .panel-note {
     color: var(--muted);
     font-size: 12px;
-    margin: -6px 0 12px;
+    margin: -8px 0 14px;
   }
 
   table {
@@ -240,12 +255,24 @@
     margin-bottom: 16px;
   }
   .fill-grid h2 {
-    margin: 0 0 10px;
-    font-size: 14px;
+    margin: 0 0 12px;
+    padding-bottom: 10px;
+    font-size: 20px;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 1.2px;
+    color: var(--ink);
+    font-weight: 700;
+    border-bottom: 2px solid var(--ink);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .fill-grid h2 .sub {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    text-transform: none;
     color: var(--muted);
-    font-weight: 600;
   }
   .fill-grid .row {
     display: grid;
@@ -350,7 +377,7 @@
   </div>
 
   <div class="fill-grid">
-    <h2>Per-slot capacity fill</h2>
+    <h2>Per-slot capacity fill <span class="sub">drag sliders to model partial sellout</span></h2>
     <div class="header-row">
       <div>Slot</div>
       <div class="num">Cap</div>
@@ -420,7 +447,7 @@
 
   <!-- ============== REVENUE ============== -->
   <section class="panel revenue">
-    <h2>Revenue</h2>
+    <h2>Revenue <span class="sub">driver tickets · parking · raffle · other</span></h2>
 
     <table>
       <thead>
@@ -548,7 +575,7 @@
 
   <!-- ============== COST ============== -->
   <section class="panel cost">
-    <h2>Cost</h2>
+    <h2>Cost <span class="sub">vendors · ops · swag · raffle · marketing</span></h2>
     <div class="panel-note">Edit any "Amount" cell. Enter 0 to exclude. All values in USD.</div>
 
     <table>
@@ -781,7 +808,7 @@
 
   <!-- ============== NET ============== -->
   <section class="panel net">
-    <h2>Net</h2>
+    <h2>Net <span class="sub">revenue − cost · live</span></h2>
     <table>
       <tbody>
         <tr><td>Total revenue (at current fill)</td><td class="num" data-out="rev.total2"></td></tr>
