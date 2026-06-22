@@ -630,7 +630,7 @@
         <tr>
           <td>Staff + sponsor shirts (1 per staff)</td>
           <td class="num">
-            <input type="number" class="qty" data-k="ops.staffcount" value="30" min="0" step="1" title="Staff headcount" />
+            <input type="number" class="qty" data-k="ops.staffcount" value="34" min="0" step="1" title="Staff headcount" />
             <span style="color:var(--muted); font-size:11px">staff</span>
             ×
             $<input type="number" class="qty" data-k="cost.brand.staffshirts.per" value="13" min="0" step="1" title="Per-shirt cost" />
@@ -840,7 +840,7 @@
     // Total ~$2,200 budget; split across GL / venue / auto lines.
     "cost.ops.gl": 1000, "cost.ops.venue": 400, "cost.ops.auto": 800,
     "cost.ops.permits": 0,    // public roads only, no permits needed
-    "cost.ops.radios": 0,     // TBD
+    "cost.ops.radios": 0,     // own all radios needed
     "cost.ops.medical": 150,  // first-aid kit only, no medic
     "cost.ops.photo": 300,    // photographer $300
     "cost.ops.meals": 0,      // no meal reimbursement
@@ -853,7 +853,7 @@
     "cost.brand.banners.unit": 10,
     "cost.brand.stickers.unit": 1, // 1 sticker per driver
     "cost.brand.signage": 200,
-    "ops.staffcount": 30, // staff + sponsor headcount
+    "ops.staffcount": 34, // 14 lead + 14 sweep + 6 admin
     "cost.brand.staffshirts.per": 13, // ~30 staff × $13
     // tick tracking
     "cost.tick.shopify": 0, "cost.tick.square": 0, "cost.tick.print": 50,
@@ -874,7 +874,7 @@
   };
 
   // -------- storage --------
-  const LS_KEY = "sss_apnl_v12";
+  const LS_KEY = "sss_apnl_v13";
 
   function loadState() {
     try { return JSON.parse(localStorage.getItem(LS_KEY)) || null; }
