@@ -12,8 +12,12 @@
     --muted: #6b6477;
     --line: #e6dee2;
     --accent: #ee2a6f;
-    --good: #c6d92d;
+    --good: #2f9e44;
+    --good-tint: #ecf7ed;
+    --good-line: #b8dcbb;
     --bad: #d92a2a;
+    --bad-tint: #fdecec;
+    --bad-line: #f0bcbc;
     --warn: #d9892a;
     --header-bg: #2a2732;
     --header-ink: #faf2f2;
@@ -58,8 +62,24 @@
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: 6px;
-    padding: 16px 20px;
+    padding: 16px 20px 16px 24px;
     margin-bottom: 16px;
+  }
+  section.panel.revenue {
+    background: var(--good-tint);
+    border-color: var(--good-line);
+    border-left: 6px solid var(--good);
+  }
+  section.panel.revenue h2 { color: var(--good); }
+  section.panel.cost {
+    background: var(--bad-tint);
+    border-color: var(--bad-line);
+    border-left: 6px solid var(--bad);
+  }
+  section.panel.cost h2 { color: var(--bad); }
+  section.panel.net {
+    background: var(--panel);
+    border-left: 6px solid var(--accent);
   }
   section.panel h2 {
     margin: 0 0 10px;
@@ -128,6 +148,8 @@
     border-color: var(--accent);
     background: #fff;
   }
+  section.panel.revenue td input.cell:focus,
+  section.panel.cost td input.cell:focus { background: #fff; }
   td input.cell.zero:not(:focus) { color: var(--muted); }
   td input.cell { max-width: 130px; }
   /* Flat dollar-amount cells: render a "$" prefix before the input. */
@@ -149,11 +171,38 @@
     border-radius: 6px;
     padding: 14px 16px;
   }
-  .summary .card .label {
+  .summary .card.rev {
+    background: var(--good-tint);
+    border-color: var(--good-line);
+    border-top: 4px solid var(--good);
+  }
+  .summary .card.cost {
+    background: var(--bad-tint);
+    border-color: var(--bad-line);
+    border-top: 4px solid var(--bad);
+  }
+  .summary .card.net {
+    background: var(--panel);
+    border-top: 4px solid var(--accent);
+  }
+  .summary .card.net.positive {
+    background: var(--good-tint);
+    border-color: var(--good-line);
+  }
+  .summary .card.net.negative {
+    background: var(--bad-tint);
+    border-color: var(--bad-line);
+  }
+  .summary .card.margin { border-top: 4px solid var(--ink); }
+  .summary .card.rev .label,
+  .summary .card.cost .label,
+  .summary .card.net .label,
+  .summary .card.margin .label {
     color: var(--muted);
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.6px;
+    font-weight: 600;
   }
   .summary .card .val {
     font-size: 22px;
@@ -168,6 +217,8 @@
   }
   .summary .card.rev .val { color: var(--good); }
   .summary .card.cost .val { color: var(--bad); }
+  .summary .card.net.positive .val { color: var(--good); }
+  .summary .card.net.negative .val { color: var(--bad); }
   .summary .card.net .val { color: var(--accent); }
   .summary .card.margin .val { color: var(--ink); }
 
@@ -258,6 +309,9 @@
     .topbar, .help { display: none; }
     .fill-grid input[type="range"] { display: none; }
     section.panel { break-inside: avoid; }
+    section.panel.revenue, .summary .card.rev { background: #f4faf4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    section.panel.cost, .summary .card.cost, .summary .card.net.negative { background: #fdf4f4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    section.panel.net, .summary .card.net.positive { background: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { background: #fff; }
   }
 
@@ -365,7 +419,7 @@
   </div>
 
   <!-- ============== REVENUE ============== -->
-  <section class="panel">
+  <section class="panel revenue">
     <h2>Revenue</h2>
 
     <table>
@@ -493,7 +547,7 @@
   </section>
 
   <!-- ============== COST ============== -->
-  <section class="panel">
+  <section class="panel cost">
     <h2>Cost</h2>
     <div class="panel-note">Edit any "Amount" cell. Enter 0 to exclude. All values in USD.</div>
 
@@ -726,7 +780,7 @@
   </section>
 
   <!-- ============== NET ============== -->
-  <section class="panel">
+  <section class="panel net">
     <h2>Net</h2>
     <table>
       <tbody>
@@ -874,7 +928,7 @@
   };
 
   // -------- storage --------
-  const LS_KEY = "sss_apnl_v13";
+  const LS_KEY = "sss_apnl_v14";
 
   function loadState() {
     try { return JSON.parse(localStorage.getItem(LS_KEY)) || null; }
@@ -1083,6 +1137,9 @@
     $("#sumCostSub").textContent = `${costLines} line items with values`;
     $("#sumNet").textContent = fmt(net);
     $("#sumNetSub").textContent = net >= 0 ? "Net positive at current fill" : "Net negative at current fill";
+    const netCard = $("#sumNet").closest(".card");
+    netCard.classList.toggle("positive", net > 0);
+    netCard.classList.toggle("negative", net < 0);
     const margin = revCur > 0 ? (net / revCur) * 100 : 0;
     $("#sumMargin").textContent = `${margin.toFixed(1)}%`;
     $("#sumMarginSub").textContent = `Net / Revenue (current fill)`;
