@@ -309,7 +309,7 @@
       <div class="rev"><span id="fillFriPct">100%</span> · <b data-out="rev.fri.sub">$9,000</b></div>
     </div>
     <div class="row">
-      <div class="slot-name">Route 2 · Sat AM (short, 5 hrs)</div>
+      <div class="slot-name">Route 2 · Sat AM (short, 3 hrs)</div>
       <div class="num slot-cap">150 cars</div>
       <div class="num slot-cap">$75</div>
       <input type="range" id="fillSatAm" min="0" max="100" step="5" value="100" />
@@ -447,13 +447,13 @@
       </thead>
       <tbody>
         <tr>
-          <td>Raffle ticket sales (1 ticket per driver)</td>
+          <td>Raffle tickets (avg $/attendee, $5/$10/$20 packs)</td>
           <td class="num">
             <span data-out="auto.carsTotal4" style="font-variant-numeric:tabular-nums; font-weight:600">0</span>
             <span style="color:var(--muted); font-size:11px">drivers (auto)</span>
             ×
-            $<input type="number" class="qty" data-k="rev.other.raffle.percar" value="2" min="0" step="1" title="Per-ticket price" />
-            <span style="color:var(--muted); font-size:11px">/ticket</span>
+            $<input type="number" class="qty" data-k="rev.other.raffle.percar" value="7" min="0" step="1" title="Average raffle spend per attendee" />
+            <span style="color:var(--muted); font-size:11px">/attendee</span>
           </td>
           <td class="num" data-out="rev.other.raffle.out"></td>
         </tr>
@@ -500,11 +500,11 @@
         <tr><th>Vendor</th><th class="num">Amount</th><th class="num">Subtotal</th></tr>
       </thead>
       <tbody>
-        <tr><td>DJ (live set)</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.dj" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.dj.out"></td></tr>
-        <tr><td>Breakdancers</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.bboys" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.bboys.out"></td></tr>
-        <tr><td>Sound / stage</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.sound" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.sound.out"></td></tr>
-        <tr><td>Security</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.sec" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.sec.out"></td></tr>
-        <tr><td>Porta-potties</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.potties" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.potties.out"></td></tr>
+        <tr><td>DJ (live set, $600 confirmed)</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.dj" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.dj.out"></td></tr>
+        <tr><td>Breakdancers (competition, $1,900 budget)</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.bboys" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.bboys.out"></td></tr>
+        <tr><td>Sound / stage (PA TBD — city or DJ; stage already at park)</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.sound" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.sound.out"></td></tr>
+        <tr><td>Security (none hired — park staff + police only)</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.sec" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.sec.out"></td></tr>
+        <tr><td>Porta-potties (Friday night park only)</td><td class="num"><input type="number" class="cell zero" data-k="cost.vendor.potties" value="0" min="0" step="1" /></td><td class="num" data-out="cost.vendor.potties.out"></td></tr>
         <tr class="subtotal"><td colspan="2">Vendor subtotal</td><td class="num" data-out="cost.vendor.total"></td></tr>
       </tbody>
     </table>
@@ -566,13 +566,14 @@
         <tr><td>Insurance — GL</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.gl" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.gl.out"></td></tr>
         <tr><td>Insurance — venue rider</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.venue" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.venue.out"></td></tr>
         <tr><td>Insurance — auto (lead/sweep × 2 Fri + N Sat)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.auto" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.auto.out"></td></tr>
-        <tr><td>Permits (city + road closure)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.permits" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.permits.out"></td></tr>
+        <tr><td>Permits (public roads only — none needed)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.permits" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.permits.out"></td></tr>
         <tr><td>Radios / comms rental</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.radios" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.radios.out"></td></tr>
-        <tr><td>Medical / first aid</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.medical" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.medical.out"></td></tr>
+        <tr><td>Medical / first aid kit (no medic)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.medical" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.medical.out"></td></tr>
         <tr><td>Photography / content</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.photo" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.photo.out"></td></tr>
+        <tr><td>DocuSign (waiver e-sign — monthly prorated)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.docusign" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.docusign.out"></td></tr>
         <tr><td>Staff meals (Fri + Sat)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.meals" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.meals.out"></td></tr>
         <tr><td>Fuel for lead/sweep vehicles</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.fuel" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.fuel.out"></td></tr>
-        <tr><td>Lead + sweep driver pay (14 staff × $300 default: 4 Fri + 10 Sat)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.driverpay" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.driverpay.out"></td></tr>
+        <tr><td>Lead + sweep driver pay (14 staff × $200/lead, flat weekend)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.driverpay" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.driverpay.out"></td></tr>
         <tr class="subtotal"><td colspan="2">Ops subtotal</td><td class="num" data-out="cost.ops.total"></td></tr>
       </tbody>
     </table>
@@ -649,12 +650,12 @@
     <table>
       <tbody>
         <tr>
-          <td>Prize purchases (1 per driver)</td>
+          <td>Prize purchases (donated; default $0)</td>
           <td class="num">
             <span data-out="auto.carsTotal" style="font-variant-numeric:tabular-nums; font-weight:600">0</span>
             <span style="color:var(--muted); font-size:11px">cars (auto)</span>
             ×
-            $<input type="number" class="qty" data-k="cost.raf.prizes.percar" value="1" min="0" step="1" title="Per-car prize cost" />
+            $<input type="number" class="qty" data-k="cost.raf.prizes.percar" value="0" min="0" step="1" title="Per-car prize cost (only if buying cash prizes)" />
             <span style="color:var(--muted); font-size:11px">/car</span>
           </td>
           <td class="num" data-out="cost.raf.prizes.out"></td>
@@ -670,12 +671,12 @@
       <tbody>
         <tr><td>Print (posters, banners)</td><td class="num"><input type="number" class="cell zero" data-k="cost.mkt.print" value="0" min="0" step="1" /></td><td class="num" data-out="cost.mkt.print.out"></td></tr>
         <tr>
-          <td>Digital ads (1 per driver)</td>
+          <td>Digital ads (per driver)</td>
           <td class="num">
             <span data-out="auto.carsTotal2" style="font-variant-numeric:tabular-nums; font-weight:600">0</span>
             <span style="color:var(--muted); font-size:11px">cars (auto)</span>
             ×
-            $<input type="number" class="qty" data-k="cost.mkt.digital.percar" value="1" min="0" step="1" title="Per-car digital ad spend" />
+            $<input type="number" class="qty" data-k="cost.mkt.digital.percar" value="2" min="0" step="1" title="Per-car digital ad spend" />
             <span style="color:var(--muted); font-size:11px">/car</span>
           </td>
           <td class="num" data-out="cost.mkt.digital.out"></td>
@@ -813,21 +814,28 @@
   // dollar amount you can override as quotes come in.
   const DEFAULTS = {
     // vendors (Friday kickoff)
-    "cost.vendor.dj": 400,
-    "cost.vendor.bboys": 300,
-    "cost.vendor.sound": 0,
-    "cost.vendor.sec": 0,
-    "cost.vendor.potties": 200,
+    "cost.vendor.dj": 600,           // DJ confirmed $600
+    "cost.vendor.bboys": 1900,       // breakdancing competition, full $1,900 budget
+    "cost.vendor.sound": 0,          // PA: city or DJ — TBD
+    "cost.vendor.sec": 0,            // no hired security; park staff + police only
+    "cost.vendor.potties": 200,      // Friday night park only
     // venue & city (Friday kickoff, 6-9 PM = 3 hrs)
     "cost.venue.park.qty": 1, "cost.venue.park.rate": 250, "cost.venue.park.hours": 3, // $750
     "cost.venue.lot": 0,
     "cost.venue.staff.qty": 6, "cost.venue.staff.rate": 30, "cost.venue.staff.hours": 3, // $540
     "cost.venue.police.qty": 8, "cost.venue.police.rate": 50, "cost.venue.police.hours": 3, // $1,200
     // ops (Fri + Sat driving)
-    "cost.ops.gl": 800, "cost.ops.venue": 200, "cost.ops.auto": 400,
-    "cost.ops.permits": 250, "cost.ops.radios": 0, "cost.ops.medical": 0,
-    "cost.ops.photo": 0, "cost.ops.meals": 300, "cost.ops.fuel": 100,
-    "cost.ops.driverpay": 4200, // 14 staff × $300 (4 Fri + 10 Sat; Sat staff work both AM+PM)
+    // Insurance: separate per-event policies (Fri morning, Fri night, Sat).
+    // Total ~$2,200 budget; split across GL / venue / auto lines.
+    "cost.ops.gl": 1000, "cost.ops.venue": 400, "cost.ops.auto": 800,
+    "cost.ops.permits": 0,    // public roads only, no permits needed
+    "cost.ops.radios": 0,     // TBD
+    "cost.ops.medical": 150,  // first-aid kit only, no medic
+    "cost.ops.photo": 300,    // photographer $300
+    "cost.ops.meals": 0,      // no meal reimbursement
+    "cost.ops.fuel": 0,       // no fuel reimbursement
+    "cost.ops.driverpay": 2800, // 14 staff × $200/lead, flat per weekend
+    "cost.ops.docusign": 30,  // DocuSign subscription (monthly prorated)
     // branded — driver swag scales with attendance, staff shirts by headcount
     "cost.brand.tshirts.unit": 10,
     "cost.brand.banners.unit": 10,
@@ -837,23 +845,24 @@
     "cost.brand.staffshirts.per": 13, // ~30 staff × $13
     // tick tracking
     "cost.tick.shopify": 0, "cost.tick.square": 0, "cost.tick.print": 50,
-    // raffle — prize cost auto-scales; infrastructure is fixed
-    "cost.raf.prizes.percar": 1,
+    // raffle — multi-prize ticket raffle. Prizes are donated, so $0 cash cost;
+    // default per-car revenue is a guess (most buy $5 or $10 worth).
+    "cost.raf.prizes.percar": 0,
     "cost.raf.infra": 50,
-    // marketing — print is fixed, digital scales
+    // marketing — print is fixed, digital scales with attendance
     "cost.mkt.print": 100,
-    "cost.mkt.digital.percar": 1,
+    "cost.mkt.digital.percar": 2,  // ~$720 total at 100% fill — small paid boost
     // dinner send-off — not buying dinner; drivers pay for their own meal.
     // Set to 0 unless we decide to subsidize. Leave the row so it's easy to model.
     "cost.dinner.percar": 0,
     // other revenue — raffle tickets auto-scale; sponsor/merch fixed
-    "rev.other.raffle.percar": 2,
+    "rev.other.raffle.percar": 7,  // avg $7/attendee (mix of $5/$10/$20 packs)
     "rev.other.sponsor": 0,
     "rev.other.merch": 0,
   };
 
   // -------- storage --------
-  const LS_KEY = "sss_apnl_v8";
+  const LS_KEY = "sss_apnl_v11";
 
   function loadState() {
     try { return JSON.parse(localStorage.getItem(LS_KEY)) || null; }
@@ -989,7 +998,7 @@
     // are auto-linked and computed above. costGroups only contains flat-amount rows.
     const costGroups = [
       ["vendor", ["dj","bboys","sound","sec","potties"]],
-      ["ops",    ["gl","venue","auto","permits","radios","medical","photo","meals","fuel","driverpay"]],
+      ["ops",    ["gl","venue","auto","permits","radios","medical","photo","docusign","meals","fuel","driverpay"]],
       ["brand",  ["signage"]], // tshirts, banners, stickers, staffshirts handled above
       ["tick",   ["shopify","square","print"]],
       ["raf",    ["infra"]], // prizes handled above
