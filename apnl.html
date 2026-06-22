@@ -283,9 +283,12 @@
     (<b>t-shirts</b>, <b>banners</b>, <b>stickers</b>,
     <b>raffle prizes</b>, <b>digital ads</b>,
     <b>staff shirts</b>) scale
-    1:1 with attendance or staff count. Every other cost is a flat dollar
-    amount — edit any cell as quotes come in. Use <b>Reset to defaults</b>
-    in the top right to start over. Print or save-as-PDF to share.
+    1:1 with attendance or staff count. The <b>swag over-order buffer</b>
+    (default 10%) covers extra t-shirts + banners we order above
+    attendance to sell at the Friday meet. Every other cost is a flat
+    dollar amount — edit any cell as quotes come in. Use <b>Reset to
+    defaults</b> in the top right to start over. Print or save-as-PDF to
+    share.
   </div>
 
   <div class="topbar">
@@ -583,6 +586,14 @@
     <table>
       <tbody>
         <tr>
+          <td><b>Swag over-order buffer</b> (extra t-shirts + banners to sell at Friday meet)</td>
+          <td class="num">
+            <input type="number" class="qty" data-k="cost.brand.overorder.pct" value="10" min="0" step="1" title="Extra % above attendance to order" />
+            <span style="color:var(--muted); font-size:11px">% over attendance</span>
+          </td>
+          <td class="num" data-out="cost.brand.overorder.out"></td>
+        </tr>
+        <tr>
           <td>T-shirts (drivers, custom printed)</td>
           <td class="num">
             <span data-out="swag.tshirts.qty" style="font-variant-numeric:tabular-nums; font-weight:600">0</span>
@@ -837,6 +848,7 @@
     "cost.ops.driverpay": 2800, // 14 staff × $200/lead, flat per weekend
     "cost.ops.docusign": 30,  // DocuSign subscription (monthly prorated)
     // branded — driver swag scales with attendance, staff shirts by headcount
+    "cost.brand.overorder.pct": 10, // extra t-shirts + banners to sell at Friday meet
     "cost.brand.tshirts.unit": 10,
     "cost.brand.banners.unit": 10,
     "cost.brand.stickers.unit": 1, // 1 sticker per driver
@@ -858,11 +870,11 @@
     // other revenue — raffle tickets auto-scale; sponsor/merch fixed
     "rev.other.raffle.percar": 7,  // avg $7/attendee (mix of $5/$10/$20 packs)
     "rev.other.sponsor": 0,
-    "rev.other.merch": 0,
+    "rev.other.merch": 200,          // leftover swag + sponsor items sold at Friday meet
   };
 
   // -------- storage --------
-  const LS_KEY = "sss_apnl_v11";
+  const LS_KEY = "sss_apnl_v12";
 
   function loadState() {
     try { return JSON.parse(localStorage.getItem(LS_KEY)) || null; }
@@ -976,11 +988,16 @@
     // Auto-linked costs: per-attendance and per-staff line items
     const tshirtUnit = readNum("cost.brand.tshirts.unit");
     const bannerUnit = readNum("cost.brand.banners.unit");
-    out("swag.tshirts.qty", carsTotal);
-    out("swag.banners.qty", carsTotal);
-    const tshirtCost = carsTotal * tshirtUnit;          // driver swag
-    const bannerCost = carsTotal * bannerUnit;
+    const overorderPct = readNum("cost.brand.overorder.pct");
+    const overorderMult = 1 + overorderPct / 100;
+    const tshirtOrderQty = Math.ceil(carsTotal * overorderMult);
+    const bannerOrderQty = Math.ceil(carsTotal * overorderMult);
+    out("swag.tshirts.qty", tshirtOrderQty);
+    out("swag.banners.qty", bannerOrderQty);
+    const tshirtCost = tshirtOrderQty * tshirtUnit;      // driver swag (over-ordered)
+    const bannerCost = bannerOrderQty * bannerUnit;
     const stickerCost = carsTotal * readNum("cost.brand.stickers.unit");
+    out("cost.brand.overorder.out", `${overorderPct}% (${tshirtOrderQty - carsTotal} extra units)`);
     const rafflePrizeCost = carsTotal * readNum("cost.raf.prizes.percar");
     const mktDigitalCost = carsTotal * readNum("cost.mkt.digital.percar");
     const dinnerCost = carsTotal * readNum("cost.dinner.percar");
