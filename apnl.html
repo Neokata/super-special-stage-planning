@@ -193,7 +193,7 @@
 
   .summary {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 12px;
     margin-bottom: 18px;
   }
@@ -226,6 +226,8 @@
     border-color: var(--bad-line);
   }
   .summary .card.margin { border-top: 4px solid var(--ink); }
+  .summary .card.breakeven .label { display: flex; align-items: baseline; gap: 6px; }
+  .summary .card.breakeven .val { font-size: 20px; }
   .summary .card.rev .label,
   .summary .card.cost .label,
   .summary .card.net .label,
@@ -407,16 +409,17 @@
 <main>
   <div class="help">
     Single live forecast. Move the per-slot fill sliders to model partial
-    sellout — revenue recalcs instantly. Several cost lines
+    sellout — revenue recalcs instantly. The <b>bundle discount %</b>
+    captures the average markdown from 1/2/3/4-session bundles
+    ($75/$125/$175/$225). Cost lines that scale with attendance
     (<b>t-shirts</b>, <b>banners</b>, <b>stickers</b>,
-    <b>raffle prizes</b>, <b>digital ads</b>,
-    <b>staff shirts</b>) scale
-    1:1 with attendance or staff count. The <b>swag over-order buffer</b>
-    (default 10%) covers extra t-shirts + banners we order above
-    attendance to sell at the Friday meet. Every other cost is a flat
-    dollar amount — edit any cell as quotes come in. Use <b>Reset to
-    defaults</b> in the top right to start over. Print or save-as-PDF to
-    share.
+    <b>digital ads</b>, <b>staff shirts</b>) auto-update from the
+    sliders. The <b>swag over-order buffer</b> (default 10%) covers
+    extra t-shirts + banners to sell at the Friday meet. The
+    <b>Break-even</b> KPI is structural — it shows how many cars you
+    need at the current cost mix, not at the current fill. Edit any
+    cell as quotes come in. Use <b>Reset to defaults</b> in the top
+    right to start over. Print or save-as-PDF to share.
   </div>
 
   <div class="topbar">
@@ -424,7 +427,7 @@
   </div>
 
   <div class="fill-grid">
-    <h2>Per-slot capacity fill <span class="sub">drag sliders to model partial sellout</span></h2>
+    <h2>Per-slot capacity fill <span class="sub">drag sliders to model partial sellout · 4 sessions, all $75</span></h2>
     <div class="header-row">
       <div>Slot</div>
       <div class="num">Cap</div>
@@ -433,39 +436,60 @@
       <div class="num">Revenue</div>
     </div>
     <div class="row">
-      <div class="slot-name">Route 1 · Fri AM (long, 6 hrs)</div>
-      <div class="num slot-cap">60 cars</div>
-      <div class="num slot-cap">$150</div>
-      <input type="range" id="fillFri" min="0" max="100" step="5" value="100" />
-      <div class="rev"><span id="fillFriPct">100%</span> · <b data-out="rev.fri.sub">$9,000</b></div>
+      <div class="slot-name">Route 1 · Fri AM (7:30 AM start)</div>
+      <div class="num slot-cap">150 cars</div>
+      <div class="num slot-cap">$75</div>
+      <input type="range" id="fillFriAm" min="0" max="100" step="5" value="100" />
+      <div class="rev"><span id="fillFriAmPct">100%</span> · <b data-out="rev.friAm.sub">$11,250</b></div>
     </div>
     <div class="row">
-      <div class="slot-name">Route 2 · Sat AM (short, 3 hrs)</div>
+      <div class="slot-name">Route 2 · Fri PM (2:00 PM start)</div>
+      <div class="num slot-cap">150 cars</div>
+      <div class="num slot-cap">$75</div>
+      <input type="range" id="fillFriPm" min="0" max="100" step="5" value="100" />
+      <div class="rev"><span id="fillFriPmPct">100%</span> · <b data-out="rev.friPm.sub">$11,250</b></div>
+    </div>
+    <div class="row">
+      <div class="slot-name">Route 3 · Sat AM (7:30 AM start)</div>
       <div class="num slot-cap">150 cars</div>
       <div class="num slot-cap">$75</div>
       <input type="range" id="fillSatAm" min="0" max="100" step="5" value="100" />
-      <div class="rev"><span id="fillSatAmPct">100%</span> · <b data-out="rev.satam.sub">$11,250</b></div>
+      <div class="rev"><span id="fillSatAmPct">100%</span> · <b data-out="rev.satAm.sub">$11,250</b></div>
     </div>
     <div class="row">
-      <div class="slot-name">Route 3 · Sat PM (short, 3 hrs)</div>
+      <div class="slot-name">Route 4 · Sat PM (2:00 PM start)</div>
       <div class="num slot-cap">150 cars</div>
       <div class="num slot-cap">$75</div>
       <input type="range" id="fillSatPm" min="0" max="100" step="5" value="100" />
-      <div class="rev"><span id="fillSatPmPct">100%</span> · <b data-out="rev.satpm.sub">$11,250</b></div>
+      <div class="rev"><span id="fillSatPmPct">100%</span> · <b data-out="rev.satPm.sub">$11,250</b></div>
     </div>
     <div class="row" style="border-top: 2px solid var(--ink); padding-top: 12px; margin-top: 4px;">
-      <div class="slot-name">Route tickets subtotal (at current fill)</div>
-      <div class="num slot-cap">360 cars</div>
+      <div class="slot-name">Route tickets subtotal (gross, before bundle discount)</div>
+      <div class="num slot-cap">600 cars</div>
       <div class="num slot-cap">—</div>
       <div></div>
-      <div class="rev"><b data-out="rev.routes.cur">$31,500</b></div>
+      <div class="rev"><b data-out="rev.routes.cur">$45,000</b></div>
     </div>
     <div class="row" style="font-size: 12px; color: var(--muted);">
       <div>Max potential (100% all slots)</div>
-      <div class="num">360 cars</div>
+      <div class="num">600 cars</div>
       <div class="num">—</div>
       <div></div>
-      <div class="rev"><b data-out="rev.routes.max">$31,500</b></div>
+      <div class="rev"><b data-out="rev.routes.max">$45,000</b></div>
+    </div>
+    <div class="row" style="background: var(--good-tint); border-top: 1px solid var(--good-line); padding: 10px 0; margin-top: 4px;">
+      <div class="slot-name">
+        <b>Bundle discount</b><br>
+        <span style="font-size:11px; color:var(--muted); font-weight:400">
+          Bundles: 1=$75, 2=$125, 3=$175, 4=$225 — tune this % to your expected mix
+        </span>
+      </div>
+      <div class="num slot-cap">—</div>
+      <div class="num slot-cap">
+        −<input type="number" class="cell zero" data-k="rev.bundle.discount.pct" value="0" min="0" max="50" step="1" style="width:48px; text-align:right" title="Average discount from multi-session bundles" />%
+      </div>
+      <div></div>
+      <div class="rev"><b data-out="rev.bundle.discount.out" style="color:var(--good)">−$0</b></div>
     </div>
   </div>
 
@@ -490,15 +514,21 @@
       <div class="val" id="sumMargin">0%</div>
       <div class="sub" id="sumMarginSub">Net / Revenue</div>
     </div>
+    <div class="card net breakeven">
+      <div class="label">Break-even <span style="font-size:10px; color:var(--muted); font-weight:500">structural</span></div>
+      <div class="val" id="sumBreakevenCars">—</div>
+      <div class="sub" id="sumBreakevenSub">cars at current cost mix</div>
+    </div>
   </div>
 
   <!-- ============== REVENUE ============== -->
   <section class="panel revenue">
-    <h2>Revenue <span class="sub">driver tickets · parking · raffle · other</span></h2>
+    <h2>Revenue <span class="sub">driver tickets · kickoff · sponsorship</span></h2>
 
+    <!-- Table A: Route tickets (drivers only) -->
     <table>
       <thead>
-        <tr class="group"><td colspan="4">Driver tickets (per slot, no discounts)</td></tr>
+        <tr class="group"><td colspan="4">Route tickets (drivers only · gross, before bundle discount)</td></tr>
         <tr>
           <th>Slot</th>
           <th class="num">Price</th>
@@ -508,40 +538,59 @@
       </thead>
       <tbody>
         <tr>
-          <td>Route 1 — Fri AM (long)</td>
-          <td class="num">$150</td>
-          <td class="num" data-out="rev.fri.cars">60</td>
-          <td class="num" data-out="rev.fri.sub2">$9,000</td>
+          <td>Route 1 — Fri AM (7:30 AM)</td>
+          <td class="num">$75</td>
+          <td class="num" data-out="rev.friAm.cars">150</td>
+          <td class="num" data-out="rev.friAm.sub2">$11,250</td>
         </tr>
         <tr>
-          <td>Route 2 — Sat AM (short)</td>
+          <td>Route 2 — Fri PM (2:00 PM)</td>
           <td class="num">$75</td>
-          <td class="num" data-out="rev.satam.cars">150</td>
-          <td class="num" data-out="rev.satam.sub2">$11,250</td>
+          <td class="num" data-out="rev.friPm.cars">150</td>
+          <td class="num" data-out="rev.friPm.sub2">$11,250</td>
         </tr>
         <tr>
-          <td>Route 3 — Sat PM (short)</td>
+          <td>Route 3 — Sat AM (7:30 AM)</td>
           <td class="num">$75</td>
-          <td class="num" data-out="rev.satpm.cars">150</td>
-          <td class="num" data-out="rev.satpm.sub2">$11,250</td>
+          <td class="num" data-out="rev.satAm.cars">150</td>
+          <td class="num" data-out="rev.satAm.sub2">$11,250</td>
+        </tr>
+        <tr>
+          <td>Route 4 — Sat PM (2:00 PM)</td>
+          <td class="num">$75</td>
+          <td class="num" data-out="rev.satPm.cars">150</td>
+          <td class="num" data-out="rev.satPm.sub2">$11,250</td>
         </tr>
         <tr class="subtotal">
-          <td colspan="3">Route ticket subtotal (at current fill)</td>
-          <td class="num" data-out="rev.routes.cur2">$31,500</td>
+          <td colspan="3">Route ticket gross subtotal</td>
+          <td class="num" data-out="rev.routes.cur2">$45,000</td>
+        </tr>
+        <tr>
+          <td>Bundle discount</td>
+          <td class="num" colspan="2" style="font-size:12px; color:var(--muted)">
+            <input type="number" class="cell zero" data-k="rev.bundle.discount.pct" value="0" min="0" max="50" step="1" style="width:60px" title="Average discount from multi-session bundles" />%
+            of gross · tune to your expected mix (1=$75, 2=$125, 3=$175, 4=$225)
+          </td>
+          <td class="num" data-out="rev.bundle.discount.out" style="color:var(--good)">−$0</td>
+        </tr>
+        <tr class="subtotal">
+          <td colspan="3">Route ticket net (after bundle discount)</td>
+          <td class="num" data-out="rev.routes.net">$45,000</td>
         </tr>
         <tr>
           <td colspan="4" style="font-size:12px; color:var(--muted); padding-top:4px">
-            Max potential (100% all slots): <b data-out="rev.routes.max2">$31,500</b>
+            Max potential (100% all slots, 0% discount): <b data-out="rev.routes.max2">$45,000</b>
           </td>
         </tr>
       </tbody>
     </table>
 
+    <!-- Table B: Friday kickoff (spectators + drivers) -->
     <table style="margin-top:14px">
       <thead>
-        <tr class="group"><td colspan="4">Friday kickoff parking (max potential = 100% sold)</td></tr>
+        <tr class="group"><td colspan="4">Friday kickoff (spectators + drivers)</td></tr>
         <tr>
-          <th>Lot</th>
+          <th>Source</th>
           <th class="num">Price</th>
           <th class="num">Capacity</th>
           <th class="num">Max revenue</th>
@@ -549,27 +598,36 @@
       </thead>
       <tbody>
         <tr>
-          <td>In-park (kickoff venue)</td>
+          <td>Parking — in-park</td>
           <td class="num">$50</td>
           <td class="num">20</td>
           <td class="num">$1,000</td>
         </tr>
         <tr>
-          <td>Reserved front lot</td>
+          <td>Parking — reserved front lot</td>
           <td class="num">$30</td>
           <td class="num">40</td>
           <td class="num">$1,200</td>
         </tr>
+        <tr>
+          <td>Raffle ticket sales (sold to everybody, $5/ticket)</td>
+          <td class="num" colspan="2">
+            <input type="number" class="cell zero" data-k="rev.other.raffle.amount" value="0" min="0" step="1" style="width:90px" title="Flat editable estimate — raffle is open to spectators, not just drivers" />
+            <span style="color:var(--muted); font-size:11px; margin-left:6px">flat estimate</span>
+          </td>
+          <td class="num" data-out="rev.other.raffle.out">$0</td>
+        </tr>
         <tr class="subtotal">
-          <td colspan="3">Kickoff parking subtotal (max)</td>
-          <td class="num" data-out="rev.park.max">$2,200</td>
+          <td colspan="3">Friday kickoff subtotal</td>
+          <td class="num" data-out="rev.kickoff.total">$2,200</td>
         </tr>
       </tbody>
     </table>
 
+    <!-- Table C: Sponsorship & merch (business-driven) -->
     <table style="margin-top:14px">
       <thead>
-        <tr class="group"><td colspan="3">Other revenue (estimated)</td></tr>
+        <tr class="group"><td colspan="3">Sponsorship &amp; merch (business-driven)</td></tr>
         <tr>
           <th>Source</th>
           <th class="num">Amount</th>
@@ -578,29 +636,18 @@
       </thead>
       <tbody>
         <tr>
-          <td>Raffle tickets (avg $/attendee, $5/$10/$20 packs)</td>
-          <td class="num">
-            <span data-out="auto.carsTotal4" style="font-variant-numeric:tabular-nums; font-weight:600">0</span>
-            <span style="color:var(--muted); font-size:11px">drivers (auto)</span>
-            ×
-            $<input type="number" class="qty" data-k="rev.other.raffle.percar" value="7" min="0" step="1" title="Average raffle spend per attendee" />
-            <span style="color:var(--muted); font-size:11px">/attendee</span>
-          </td>
-          <td class="num" data-out="rev.other.raffle.out"></td>
-        </tr>
-        <tr>
           <td>Sponsorship</td>
           <td class="num"><input type="number" class="cell zero" data-k="rev.other.sponsor" value="0" min="0" step="1" /></td>
-          <td class="num" data-out="rev.other.sponsor.out"></td>
+          <td class="num" data-out="rev.other.sponsor.out">$0</td>
         </tr>
         <tr>
           <td>Merch at kickoff</td>
           <td class="num"><input type="number" class="cell zero" data-k="rev.other.merch" value="0" min="0" step="1" /></td>
-          <td class="num" data-out="rev.other.merch.out"></td>
+          <td class="num" data-out="rev.other.merch.out">$0</td>
         </tr>
         <tr class="subtotal">
-          <td colspan="2">Other revenue subtotal</td>
-          <td class="num" data-out="rev.other.total"></td>
+          <td colspan="2">Sponsorship &amp; merch subtotal</td>
+          <td class="num" data-out="rev.sponsor.total">$0</td>
         </tr>
       </tbody>
     </table>
@@ -608,12 +655,12 @@
     <table style="margin-top:14px">
       <tbody>
         <tr class="total">
-          <td colspan="3">TOTAL REVENUE (at current fill)</td>
+          <td colspan="3">TOTAL REVENUE (at current fill, after bundle discount)</td>
           <td class="num" data-out="rev.total"></td>
         </tr>
         <tr>
           <td colspan="3" style="font-size:12px; color:var(--muted)">
-            Max potential (100% all slots): <b data-out="rev.maxpotential">$0</b>
+            Max potential (100% all slots, 0% discount): <b data-out="rev.maxpotential">$0</b>
           </td>
         </tr>
       </tbody>
@@ -694,17 +741,14 @@
     <details open><summary>Operations (Fri + Sat driving)</summary>
     <table>
       <tbody>
-        <tr><td>Insurance — GL</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.gl" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.gl.out"></td></tr>
-        <tr><td>Insurance — venue rider</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.venue" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.venue.out"></td></tr>
-        <tr><td>Insurance — auto (lead/sweep × 2 Fri + N Sat)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.auto" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.auto.out"></td></tr>
+        <tr><td>Insurance — Friday morning (route, 60 cars)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.insFriAm" value="500" min="0" step="1" title="Fri morning route coverage" /></td><td class="num" data-out="cost.ops.insFriAm.out"></td></tr>
+        <tr><td>Insurance — Friday night kickoff (park event)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.insFriNight" value="2000" min="0" step="1" title="Friday night park event coverage" /></td><td class="num" data-out="cost.ops.insFriNight.out"></td></tr>
+        <tr><td>Insurance — Saturday all-day (5 routes × 2 sessions)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.insSat" value="1000" min="0" step="1" title="Saturday all-day coverage" /></td><td class="num" data-out="cost.ops.insSat.out"></td></tr>
         <tr><td>Permits (public roads only — none needed)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.permits" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.permits.out"></td></tr>
-        <tr><td>Radios / comms rental</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.radios" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.radios.out"></td></tr>
-        <tr><td>Medical / first aid kit (no medic)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.medical" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.medical.out"></td></tr>
-        <tr><td>Photography / content</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.photo" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.photo.out"></td></tr>
-        <tr><td>DocuSign (waiver e-sign — monthly prorated)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.docusign" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.docusign.out"></td></tr>
+        <tr><td>Photography / content (1 photographer, weekend)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.photo" value="300" min="0" step="1" /></td><td class="num" data-out="cost.ops.photo.out"></td></tr>
         <tr><td>Staff meals (Fri + Sat)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.meals" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.meals.out"></td></tr>
         <tr><td>Fuel for lead/sweep vehicles</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.fuel" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.fuel.out"></td></tr>
-        <tr><td>Lead + sweep driver pay (14 staff × $200/lead, flat weekend)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.driverpay" value="0" min="0" step="1" /></td><td class="num" data-out="cost.ops.driverpay.out"></td></tr>
+        <tr><td>Lead + sweep driver pay (40 staff-pays × $300, weekend flat)</td><td class="num"><input type="number" class="cell zero" data-k="cost.ops.driverpay" value="12000" min="0" step="1" /></td><td class="num" data-out="cost.ops.driverpay.out"></td></tr>
         <tr class="subtotal"><td colspan="2">Ops subtotal</td><td class="num" data-out="cost.ops.total"></td></tr>
       </tbody>
     </table>
@@ -770,7 +814,7 @@
       </tbody>
     </table>
     <div class="panel-note" style="margin-top:6px">
-      Driver swag + stickers at full fill: 360 shirts × $10 + 360 banners × $10 + 360 stickers × $1 = <b>$7,560</b>. Quantity auto-scales with the per-slot fill sliders above (1 shirt + 1 banner + 1 sticker per participating driver). At 50% fill on all slots, drops to $3,780 (180 drivers × $21).
+      Driver swag + stickers at full fill: 600 shirts × $10 + 600 banners × $10 + 600 stickers × $1 = <b>$12,600</b>. Quantity auto-scales with the per-slot fill sliders above (1 shirt + 1 banner + 1 sticker per participating driver). At 50% fill on all slots, drops to $6,300 (300 drivers × $21).
     </div>
     </details>
 
@@ -785,20 +829,9 @@
     </table>
     </details>
 
-    <details open><summary>Raffle / prizes</summary>
+    <details open><summary>Raffle (prizes donated by sponsors)</summary>
     <table>
       <tbody>
-        <tr>
-          <td>Prize purchases (donated; default $0)</td>
-          <td class="num">
-            <span data-out="auto.carsTotal" style="font-variant-numeric:tabular-nums; font-weight:600">0</span>
-            <span style="color:var(--muted); font-size:11px">cars (auto)</span>
-            ×
-            $<input type="number" class="qty" data-k="cost.raf.prizes.percar" value="0" min="0" step="1" title="Per-car prize cost (only if buying cash prizes)" />
-            <span style="color:var(--muted); font-size:11px">/car</span>
-          </td>
-          <td class="num" data-out="cost.raf.prizes.out"></td>
-        </tr>
         <tr><td>Raffle infrastructure (drum, tickets, signs)</td><td class="num"><input type="number" class="cell zero" data-k="cost.raf.infra" value="0" min="0" step="1" /></td><td class="num" data-out="cost.raf.infra.out"></td></tr>
         <tr class="subtotal"><td colspan="2">Raffle subtotal</td><td class="num" data-out="cost.raf.total"></td></tr>
       </tbody>
@@ -812,7 +845,7 @@
         <tr>
           <td>Digital ads (per driver)</td>
           <td class="num">
-            <span data-out="auto.carsTotal2" style="font-variant-numeric:tabular-nums; font-weight:600">0</span>
+            <span data-out="auto.carsTotal" style="font-variant-numeric:tabular-nums; font-weight:600">0</span>
             <span style="color:var(--muted); font-size:11px">cars (auto)</span>
             ×
             $<input type="number" class="qty" data-k="cost.mkt.digital.percar" value="2" min="0" step="1" title="Per-car digital ad spend" />
@@ -821,24 +854,6 @@
           <td class="num" data-out="cost.mkt.digital.out"></td>
         </tr>
         <tr class="subtotal"><td colspan="2">Marketing subtotal</td><td class="num" data-out="cost.mkt.total"></td></tr>
-      </tbody>
-    </table>
-    </details>
-
-    <details open><summary>Saturday dinner send-off (1 per driver)</summary>
-    <table>
-      <tbody>
-        <tr>
-          <td>Dinner send-off (1 per driver)</td>
-          <td class="num">
-            <span data-out="auto.carsTotal3" style="font-variant-numeric:tabular-nums; font-weight:600">0</span>
-            <span style="color:var(--muted); font-size:11px">drivers (auto)</span>
-            ×
-            $<input type="number" class="qty" data-k="cost.dinner.percar" value="5" min="0" step="1" title="Per-person dinner cost" />
-            <span style="color:var(--muted); font-size:11px">/person</span>
-          </td>
-          <td class="num" data-out="cost.dinner.out"></td>
-        </tr>
       </tbody>
     </table>
     </details>
@@ -878,50 +893,63 @@
     <summary>Notes / assumptions</summary>
     <div style="padding:10px 4px; font-size:13px; color:var(--ink)">
       <ul style="margin:6px 0; padding-left:20px; line-height:1.7">
-        <li><b>Max potential income</b> at 100% sellout:
+        <li><b>Schedule.</b> Four uniform sessions: Fri 7:30 AM + 2:00 PM,
+          Sat 7:30 AM + 2:00 PM. Each session runs 5 different physical
+          routes, 2 packs of 15 cars per route, 1 lead + 1 sweep driver
+          per pack.</li>
+        <li><b>Capacity.</b> 150 cars/session × 4 sessions = <b>600 driver
+          capacity</b>. Per-slot price $75.</li>
+        <li><b>Bundle pricing.</b> Multi-session bundles: 1 session = $75,
+          2 = $125, 3 = $175, 4 = $225 (essentially buy-3-get-1-free).
+          The P&amp;L models this with a single editable
+          <i>Bundle discount %</i> applied to gross route revenue — tune
+          the % as your bundle-mix forecast firms up. Default is 0%.
+          At 30%, $45,000 × 0.30 = $13,500 discount, net $31,500
+          (matches the old 3-tier ceiling).</li>
+        <li><b>Pack model.</b> 5 routes × 2 packs × 15 cars/session × 4
+          sessions = 600 driver capacity. Per pack: 2 staff (1 lead + 1
+          sweep). 5 routes × 2 packs × 2 staff = 20 staff/session. Same
+          staff runs both AM and PM of their pack (one pay per staff per
+          day) = 20 staff-pays/day × 2 days = <b>40 staff-pays weekend</b>.
+          Driver-pay default is $300/staff × 40 = $12,000.</li>
+        <li><b>Max potential income</b> at 100% sellout (no bundle discount):
           <ul style="margin:4px 0 4px 20px; padding:0; list-style:disc">
-            <li>Route 1 (Fri AM, 60 cars × $150) = $9,000</li>
-            <li>Route 2 (Sat AM, 150 cars × $75) = $11,250</li>
-            <li>Route 3 (Sat PM, 150 cars × $75) = $11,250</li>
-            <li>Route subtotal: <b>$31,500</b></li>
-            <li>Plus $2,200 max kickoff parking + other revenue</li>
+            <li>4 sessions × 150 cars × $75 = <b>$45,000</b> routes</li>
+            <li>Plus $2,200 max kickoff parking (in-park $50 × 20 + reserved $30 × 40)</li>
+            <li>Plus raffle (flat editable — open to everybody at $5/ticket), sponsorship, merch</li>
           </ul>
         </li>
-        <li><b>No discounts.</b> Each slot is one price. A driver taking all
-          3 slots pays $300 ($150 + $75 + $75). Replaces the older
-          3-tier $75/$60/$50 model.</li>
-        <li><b>Per-slot fill sliders</b> scale revenue independently. So
-          if Friday is sold out at 60 but Saturday is at 50%, each slider
-          reflects that.</li>
-        <li><b>Friday pack model</b>: 2 packs of 30, 2 lead + 2 sweep
-          drivers (4 driver-pays for Friday).</li>
-        <li><b>Saturday pack model</b>: 5 different physical routes,
-          each with Pack A (AM) and Pack B (PM) of 15 cars. Per route:
-          1 lead + 1 tail. <b>5 routes × 2 staff = 10 driver-pays
-          for Saturday.</b> The same staff works both AM and PM for
-          their route — one pay per staff per day, not per session.</li>
-        <li><b>Friday kickoff venue & city</b> (park, 6-9 PM = 3 hrs):
-          park rental $250/hr (1 venue), 6 park staff at $30/hr, 8
-          police officers at $50/hr. Venue &amp; city subtotal =
-          $750 + $540 + $1,200 = <b>$2,490</b>. Each rate /
-          headcount / hours is editable in case quotes come in
-          different.</li>
-        <li><b>Total weekend staff drivers: 14</b> (4 Fri + 10 Sat).
-          At $300/staff = $4,200 default. Edit the "Lead + sweep
-          driver pay" cell in Ops to model different rates.</li>
-        <li><b>Driver swag</b> (t-shirts + windshield banners, $10 each)
-          auto-scales with the per-slot fill sliders. At 100% sellout:
-          360 drivers × $20 = $7,200. Drop the sliders to model partial
-          sellout — swag cost updates instantly.</li>
+        <li><b>Raffle.</b> $5/ticket, sold to everybody (drivers, walk-ins,
+          spectators). Prizes are donated by sponsors — there's no prize
+          cost row. Revenue is a single flat editable amount, not tied
+          to driver count.</li>
+        <li><b>Insurance.</b> Three labeled policies:
+          <ul style="margin:4px 0 4px 20px; padding:0; list-style:disc">
+            <li>Friday morning (route coverage): $500</li>
+            <li>Friday night kickoff (park event): $2,000</li>
+            <li>Saturday all-day (5 routes × 2 sessions): $1,000</li>
+            <li>Total: <b>$3,500</b></li>
+          </ul>
+        </li>
+        <li><b>Break-even KPI</b> (top-right card) shows how many cars (of
+          600) the event needs at the current cost mix to net $0. It's
+          <i>structural</i> — does not move with the fill sliders — but
+          does respond to the bundle-discount % (because the effective
+          per-car revenue changes). Red card means the required number
+          exceeds 600 cars; green means already break-even.</li>
+        <li><b>Driver swag</b> (t-shirts + windshield banners + stickers,
+          $10 + $10 + $1 = $21/driver) auto-scales with the per-slot fill
+          sliders. At 100% sellout: 600 × $21 = $12,600 max.</li>
         <li><b>Auto-linked per-attendance costs</b>: t-shirts ($10/driver),
           windshield banners ($10/driver), stickers ($1/driver),
-          raffle prizes ($1/driver), digital marketing ($1/driver),
-          raffle ticket revenue ($2/driver). Each is qty × $/unit
-          where qty auto-derives from the fill sliders. Staff T-shirts
-          are qty × $/shirt where qty is the editable staff headcount
-          (default 30, $13/shirt). <b>Dinner send-off</b> is modeled at
-          $0 — drivers pay for their own meal at a coordinated
-          restaurant or tailgate.</li>
+          digital marketing ($2/driver). Each is qty × $/unit where qty
+          auto-derives from the fill sliders. Staff T-shirts are qty ×
+          $/shirt where qty is the editable staff headcount (default 40,
+          $13/shirt).</li>
+        <li><b>Removed cost lines</b>: dinner send-off (drivers pay for
+          own meal), radios/comms rental (team owns all radios), medical
+          / first-aid (no medic), DocuSign (not pursued), raffle prizes
+          (donated).</li>
         <li><b>Numbers persist</b> via <code>localStorage</code> on this
           browser only. Clearing site data wipes them — copy out to a
           sheet if you need a real backup. The <b>Reset to defaults</b>
@@ -936,12 +964,16 @@
   "use strict";
 
   // -------- slot definitions --------
+  // 4 uniform sessions: Fri + Sat, 7:30 AM + 2:00 PM starts.
+  // All 150 cars/session × $75. Total capacity: 600 cars.
   const SLOTS = {
-    fri:   { cap: 60,  price: 150, name: "Route 1 (Fri AM)" },
-    satam: { cap: 150, price: 75,  name: "Route 2 (Sat AM)" },
-    satpm: { cap: 150, price: 75,  name: "Route 3 (Sat PM)" },
+    friAm: { cap: 150, price: 75, name: "Route 1 (Fri AM)" },
+    friPm: { cap: 150, price: 75, name: "Route 2 (Fri PM)" },
+    satAm: { cap: 150, price: 75, name: "Route 3 (Sat AM)" },
+    satPm: { cap: 150, price: 75, name: "Route 4 (Sat PM)" },
   };
-  const TOTAL_CAP = SLOTS.fri.cap + SLOTS.satam.cap + SLOTS.satpm.cap; // 360
+  const TOTAL_CAP = SLOTS.friAm.cap + SLOTS.friPm.cap
+                  + SLOTS.satAm.cap + SLOTS.satPm.cap; // 600
 
   const PARKING_IN_PRICE = 50, PARKING_IN_CAP = 20;
   const PARKING_RS_PRICE = 30, PARKING_RS_CAP = 40;
@@ -963,46 +995,39 @@
     "cost.venue.lot": 0,
     "cost.venue.staff.qty": 6, "cost.venue.staff.rate": 30, "cost.venue.staff.hours": 3, // $540
     "cost.venue.police.qty": 8, "cost.venue.police.rate": 50, "cost.venue.police.hours": 3, // $1,200
-    // ops (Fri + Sat driving)
-    // Insurance: separate per-event policies (Fri morning, Fri night, Sat).
-    // Total ~$2,200 budget; split across GL / venue / auto lines.
-    "cost.ops.gl": 1000, "cost.ops.venue": 400, "cost.ops.auto": 800,
-    "cost.ops.permits": 0,    // public roads only, no permits needed
-    "cost.ops.radios": 0,     // own all radios needed
-    "cost.ops.medical": 150,  // first-aid kit only, no medic
-    "cost.ops.photo": 300,    // photographer $300
-    "cost.ops.meals": 0,      // no meal reimbursement
-    "cost.ops.fuel": 0,       // no fuel reimbursement
-    "cost.ops.driverpay": 2800, // 14 staff × $200/lead, flat per weekend
-    "cost.ops.docusign": 30,  // DocuSign subscription (monthly prorated)
+    // ops — 3 labeled insurance policies (replace old GL/venue/auto split)
+    "cost.ops.insFriAm": 500,        // Friday morning route coverage
+    "cost.ops.insFriNight": 2000,    // Friday night kickoff coverage
+    "cost.ops.insSat": 1000,         // Saturday all-day coverage
+    "cost.ops.permits": 0,           // public roads only, no permits needed
+    "cost.ops.photo": 300,           // 1 photographer for the weekend
+    "cost.ops.meals": 0,             // no meal reimbursement
+    "cost.ops.fuel": 0,              // no fuel reimbursement
+    "cost.ops.driverpay": 12000,     // 40 staff-pays × $300 (20/day × Fri+Sat)
     // branded — driver swag scales with attendance, staff shirts by headcount
-    "cost.brand.overorder.pct": 10, // extra t-shirts + banners to sell at Friday meet
+    "cost.brand.overorder.pct": 10,  // extra t-shirts + banners to sell at Friday meet
     "cost.brand.tshirts.unit": 10,
     "cost.brand.banners.unit": 10,
-    "cost.brand.stickers.unit": 1, // 1 sticker per driver
-    "cost.brand.signage": 200,
-    "ops.staffcount": 34, // 14 lead + 14 sweep + 6 admin
-    "cost.brand.staffshirts.per": 13, // ~30 staff × $13
+    "cost.brand.stickers.unit": 1,
+    "cost.brand.signage": 0,         // quote pending
+    "ops.staffcount": 40,            // 40 staff-pays weekend (20 lead + 20 sweep, no admin)
+    "cost.brand.staffshirts.per": 13,
     // tick tracking
-    "cost.tick.shopify": 0, "cost.tick.square": 0, "cost.tick.print": 50,
-    // raffle — multi-prize ticket raffle. Prizes are donated, so $0 cash cost;
-    // default per-car revenue is a guess (most buy $5 or $10 worth).
-    "cost.raf.prizes.percar": 0,
-    "cost.raf.infra": 50,
-    // marketing — print is fixed, digital scales with attendance
-    "cost.mkt.print": 100,
-    "cost.mkt.digital.percar": 2,  // ~$720 total at 100% fill — small paid boost
-    // dinner send-off — not buying dinner; drivers pay for their own meal.
-    // Set to 0 unless we decide to subsidize. Leave the row so it's easy to model.
-    "cost.dinner.percar": 0,
-    // other revenue — raffle tickets auto-scale; sponsor/merch fixed
-    "rev.other.raffle.percar": 7,  // avg $7/attendee (mix of $5/$10/$20 packs)
+    "cost.tick.shopify": 0, "cost.tick.square": 0, "cost.tick.print": 0, // quote pending
+    // raffle — only infrastructure (drum, tickets, signs); prizes donated by sponsors
+    "cost.raf.infra": 0,             // quote pending
+    // marketing
+    "cost.mkt.print": 0,             // quote pending
+    "cost.mkt.digital.percar": 2,    // small paid boost per driver
+    // revenue
+    "rev.other.raffle.amount": 0,    // flat editable estimate (raffle open to everybody, $5/ticket)
     "rev.other.sponsor": 0,
-    "rev.other.merch": 200,          // leftover swag + sponsor items sold at Friday meet
+    "rev.other.merch": 0,            // leftover swag + sponsor items sold at Friday meet
+    "rev.bundle.discount.pct": 0,    // avg discount from multi-session bundles (1=$75, 2=$125, 3=$175, 4=$225)
   };
 
   // -------- storage --------
-  const LS_KEY = "sss_apnl_v15";
+  const LS_KEY = "sss_apnl_v16";
 
   function loadState() {
     try { return JSON.parse(localStorage.getItem(LS_KEY)) || null; }
@@ -1046,68 +1071,84 @@
   }
 
   function compute() {
-    const fillFri = getFillPct("Fri");
+    const fillFriAm = getFillPct("FriAm");
+    const fillFriPm = getFillPct("FriPm");
     const fillSatAm = getFillPct("SatAm");
     const fillSatPm = getFillPct("SatPm");
 
-    const carsFri = Math.round(SLOTS.fri.cap * fillFri);
-    const carsSatAm = Math.round(SLOTS.satam.cap * fillSatAm);
-    const carsSatPm = Math.round(SLOTS.satpm.cap * fillSatPm);
-    const carsTotal = carsFri + carsSatAm + carsSatPm;
+    const carsFriAm = Math.round(SLOTS.friAm.cap * fillFriAm);
+    const carsFriPm = Math.round(SLOTS.friPm.cap * fillFriPm);
+    const carsSatAm = Math.round(SLOTS.satAm.cap * fillSatAm);
+    const carsSatPm = Math.round(SLOTS.satPm.cap * fillSatPm);
+    const carsTotal = carsFriAm + carsFriPm + carsSatAm + carsSatPm;
     const staffCount = readNum("ops.staffcount");
 
-    // Mirror attendance numbers to every qty(auto) span in the cost / revenue tables
+    // Mirror attendance numbers to every qty(auto) span in the cost / revenue tables.
+    // Single ID — swag rows + digital-ads all read from auto.carsTotal.
     out("auto.carsTotal", carsTotal);
-    out("auto.carsTotal2", carsTotal);
-    out("auto.carsTotal3", carsTotal);
-    out("auto.carsTotal4", carsTotal);
     out("auto.staffCount", staffCount);
 
-    const revFri = carsFri * SLOTS.fri.price;
-    const revSatAm = carsSatAm * SLOTS.satam.price;
-    const revSatPm = carsSatPm * SLOTS.satpm.price;
-    const routesCur = revFri + revSatAm + revSatPm;
+    const revFriAm = carsFriAm * SLOTS.friAm.price;
+    const revFriPm = carsFriPm * SLOTS.friPm.price;
+    const revSatAm = carsSatAm * SLOTS.satAm.price;
+    const revSatPm = carsSatPm * SLOTS.satPm.price;
+    const routesCurGross = revFriAm + revFriPm + revSatAm + revSatPm;
 
-    const maxFri = SLOTS.fri.cap * SLOTS.fri.price;
-    const maxSatAm = SLOTS.satam.cap * SLOTS.satam.price;
-    const maxSatPm = SLOTS.satpm.cap * SLOTS.satpm.price;
-    const routesMax = maxFri + maxSatAm + maxSatPm;
+    const routesMax = (SLOTS.friAm.cap + SLOTS.friPm.cap
+                     + SLOTS.satAm.cap + SLOTS.satPm.cap) * 75; // 45,000
+
+    // Bundle discount: applied to gross route revenue.
+    const bundleDiscPct = readNum("rev.bundle.discount.pct");
+    const bundleDiscAmt = Math.round(routesCurGross * bundleDiscPct / 100);
+    out("rev.bundle.discount.out", -bundleDiscAmt);
+    const routesCurNet = routesCurGross - bundleDiscAmt;
+    out("rev.routes.net", routesCurNet);
 
     // Update fill grid
-    out("rev.fri.sub", revFri);
-    out("rev.satam.sub", revSatAm);
-    out("rev.satpm.sub", revSatPm);
-    out("rev.routes.cur", routesCur);
+    out("rev.friAm.sub", revFriAm);
+    out("rev.friPm.sub", revFriPm);
+    out("rev.satAm.sub", revSatAm);
+    out("rev.satPm.sub", revSatPm);
+    out("rev.routes.cur", routesCurGross);
     out("rev.routes.max", routesMax);
-    $("#fillFriPct").textContent = `${Math.round(fillFri * 100)}%`;
+    $("#fillFriAmPct").textContent = `${Math.round(fillFriAm * 100)}%`;
+    $("#fillFriPmPct").textContent = `${Math.round(fillFriPm * 100)}%`;
     $("#fillSatAmPct").textContent = `${Math.round(fillSatAm * 100)}%`;
     $("#fillSatPmPct").textContent = `${Math.round(fillSatPm * 100)}%`;
 
-    // Update revenue table
-    out("rev.fri.cars", carsFri);
-    out("rev.satam.cars", carsSatAm);
-    out("rev.satpm.cars", carsSatPm);
-    out("rev.fri.sub2", revFri);
-    out("rev.satam.sub2", revSatAm);
-    out("rev.satpm.sub2", revSatPm);
-    out("rev.routes.cur2", routesCur);
+    // Update revenue table A (Driver tickets)
+    out("rev.friAm.cars", carsFriAm);
+    out("rev.friPm.cars", carsFriPm);
+    out("rev.satAm.cars", carsSatAm);
+    out("rev.satPm.cars", carsSatPm);
+    out("rev.friAm.sub2", revFriAm);
+    out("rev.friPm.sub2", revFriPm);
+    out("rev.satAm.sub2", revSatAm);
+    out("rev.satPm.sub2", revSatPm);
+    out("rev.routes.cur2", routesCurGross);
     out("rev.routes.max2", routesMax);
 
     // Parking (always max)
     out("rev.park.max", PARKING_MAX);
     const parkCur = PARKING_MAX;
 
-    // Other revenue — raffle tickets auto-scale 1 per driver; sponsor/merch fixed
-    const raffleRev = carsTotal * readNum("rev.other.raffle.percar");
+    // Other revenue — raffle is now a flat editable amount (decoupled from driver count).
+    const raffleRev = readNum("rev.other.raffle.amount");
     out("rev.other.raffle.out", raffleRev);
     const sp = readNum("rev.other.sponsor");
     const me = readNum("rev.other.merch");
     out("rev.other.sponsor.out", sp);
     out("rev.other.merch.out", me);
-    const otherTotal = raffleRev + sp + me;
-    out("rev.other.total", otherTotal);
 
-    const revCur = routesCur + parkCur + otherTotal;
+    // Kickoff subtotal (parking + raffle)
+    const kickoffTotal = parkCur + raffleRev;
+    out("rev.kickoff.total", kickoffTotal);
+    // Sponsorship & merch subtotal
+    const sponsorTotal = sp + me;
+    out("rev.sponsor.total", sponsorTotal);
+
+    const otherTotal = raffleRev + sp + me;
+    const revCur = routesCurNet + parkCur + otherTotal;
     const revMax = routesMax + PARKING_MAX + otherTotal;
     out("rev.total", revCur);
     out("rev.total2", revCur);
@@ -1122,44 +1163,37 @@
     const bannerOrderQty = Math.ceil(carsTotal * overorderMult);
     out("swag.tshirts.qty", tshirtOrderQty);
     out("swag.banners.qty", bannerOrderQty);
-    const tshirtCost = tshirtOrderQty * tshirtUnit;      // driver swag (over-ordered)
+    const tshirtCost = tshirtOrderQty * tshirtUnit;
     const bannerCost = bannerOrderQty * bannerUnit;
     const stickerCost = carsTotal * readNum("cost.brand.stickers.unit");
     out("cost.brand.overorder.out", `${overorderPct}% (${tshirtOrderQty - carsTotal} extra units)`);
-    const rafflePrizeCost = carsTotal * readNum("cost.raf.prizes.percar");
     const mktDigitalCost = carsTotal * readNum("cost.mkt.digital.percar");
-    const dinnerCost = carsTotal * readNum("cost.dinner.percar");
     const staffShirtCost = staffCount * readNum("cost.brand.staffshirts.per");
     out("cost.brand.tshirts.out", tshirtCost);
     out("cost.brand.banners.out", bannerCost);
     out("cost.brand.stickers.out", stickerCost);
-    out("cost.raf.prizes.out", rafflePrizeCost);
     out("cost.mkt.digital.out", mktDigitalCost);
-    out("cost.dinner.out", dinnerCost);
     out("cost.brand.staffshirts.out", staffShirtCost);
 
     // Cost
-    // Note: tshirts, banners, raffle prizes, digital ads, dinner, and staff shirts
-    // are auto-linked and computed above. costGroups only contains flat-amount rows.
+    // Note: tshirts, banners, stickers, staff shirts, and digital ads are
+    // auto-linked and computed above. costGroups only contains flat-amount rows.
     const costGroups = [
       ["vendor", ["dj","bboys","sound","sec","potties"]],
-      ["ops",    ["gl","venue","auto","permits","radios","medical","photo","docusign","meals","fuel","driverpay"]],
+      ["ops",    ["insFriAm","insFriNight","insSat","permits","photo","meals","fuel","driverpay"]],
       ["brand",  ["signage"]], // tshirts, banners, stickers, staffshirts handled above
       ["tick",   ["shopify","square","print"]],
-      ["raf",    ["infra"]], // prizes handled above
+      ["raf",    ["infra"]],
       ["mkt",    ["print"]], // digital handled above
     ];
     let costTotal = 0;
     let costLines = 0;
-    // Auto-linked line items
     const autoLines = [
       ["tshirts", tshirtCost],
       ["banners", bannerCost],
       ["stickers", stickerCost],
       ["staffshirts", staffShirtCost],
-      ["raffle prizes", rafflePrizeCost],
       ["digital ads", mktDigitalCost],
-      ["dinner", dinnerCost],
     ];
     for (const [, v] of autoLines) {
       costTotal += v;
@@ -1216,7 +1250,38 @@
     netCard.classList.toggle("negative", net < 0);
     const margin = revCur > 0 ? (net / revCur) * 100 : 0;
     $("#sumMargin").textContent = `${margin.toFixed(1)}%`;
-    $("#sumMarginSub").textContent = `Net / Revenue (current fill)`;
+    $("#sumMarginSub").textContent = `Net / Revenue`;
+
+    // Break-even (structural — does not move with fill sliders)
+    // fixedCosts = cost total minus per-attendance items
+    const fixedCosts = costTotal - tshirtCost - bannerCost - stickerCost - staffShirtCost;
+    const otherRev = PARKING_MAX + raffleRev + sp + me;
+    const grossPerCar = 75;
+    const effPerCar = grossPerCar * (1 - bundleDiscPct / 100);
+    const beEl = $("#sumBreakevenCars");
+    const beSubEl = $("#sumBreakevenSub");
+    const beCard = beEl.closest(".card");
+    beCard.classList.remove("positive", "negative");
+    if (effPerCar <= 0) {
+      beEl.textContent = "n/a";
+      beSubEl.textContent = "Set bundle discount below 100%";
+    } else {
+      const need = Math.ceil((fixedCosts - otherRev) / effPerCar);
+      const breakevenCars = Math.max(0, need);
+      if (breakevenCars > TOTAL_CAP) {
+        beEl.textContent = `${breakevenCars}`;
+        beSubEl.textContent = `Beyond capacity (${TOTAL_CAP})`;
+        beCard.classList.add("negative");
+      } else if (breakevenCars === 0) {
+        beEl.textContent = `0`;
+        beSubEl.textContent = `Already break-even`;
+        beCard.classList.add("positive");
+      } else {
+        const pct = Math.round(breakevenCars / TOTAL_CAP * 100);
+        beEl.textContent = `${breakevenCars}`;
+        beSubEl.textContent = `${pct}% of ${TOTAL_CAP} (${breakevenCars} cars)`;
+      }
+    }
 
     // Net note
     let note = "";
@@ -1239,7 +1304,8 @@
   function persistState() {
     const state = {};
     $$('input[data-k]').forEach(e => { state[e.dataset.k] = parseFloat(e.value) || 0; });
-    state._fillFri = parseFloat($("#fillFri").value);
+    state._fillFriAm = parseFloat($("#fillFriAm").value);
+    state._fillFriPm = parseFloat($("#fillFriPm").value);
     state._fillSatAm = parseFloat($("#fillSatAm").value);
     state._fillSatPm = parseFloat($("#fillSatPm").value);
     saveState(state);
@@ -1254,14 +1320,16 @@
     const saved = loadState();
     if (saved) {
       for (const [k, v] of Object.entries(saved)) {
-        if (k === "_fillFri") $("#fillFri").value = v;
+        if (k === "_fillFriAm") $("#fillFriAm").value = v;
+        else if (k === "_fillFriPm") $("#fillFriPm").value = v;
         else if (k === "_fillSatAm") $("#fillSatAm").value = v;
         else if (k === "_fillSatPm") $("#fillSatPm").value = v;
         else if (k.startsWith("_")) continue;
         else writeNum(k, v);
       }
     } else {
-      $("#fillFri").value = 100;
+      $("#fillFriAm").value = 100;
+      $("#fillFriPm").value = 100;
       $("#fillSatAm").value = 100;
       $("#fillSatPm").value = 100;
     }
@@ -1276,7 +1344,7 @@
   }
 
   function attach() {
-    $$('input[data-k], #fillFri, #fillSatAm, #fillSatPm').forEach(el => {
+    $$('input[data-k], #fillFriAm, #fillFriPm, #fillSatAm, #fillSatPm').forEach(el => {
       el.addEventListener("input", compute);
     });
     $("#resetBtn").addEventListener("click", resetAll);
